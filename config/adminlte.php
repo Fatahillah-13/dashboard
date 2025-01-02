@@ -332,6 +332,12 @@ return [
             'text' => 'List Calon Karyawan',
             'url' => 'list-new-member',
             'icon' => 'fas fa fa-users',
+            'submenu' => [
+                [
+                    'text' => 'Tambah Calon Karyawan',
+                    'url' => '/karyawan-baru/create',
+                ],
+            ]
         ],
         [
             'text' => 'List Ambil Foto',

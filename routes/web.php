@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\KaryawanBaruController;
 
 // Route::get('/', function () {
 //     return view('home');
@@ -27,3 +28,9 @@ Route::get('/list-take-photo', function () {
 
 // Route to Home page
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/karyawan-baru/create', function () {
+    return view('form_karyawan_baru');
+})->name('karyawan-baru.create');;
+
+Route::post('/karyawan-baru/create', [KaryawanBaruController::class, 'store'])->name('karyawan-baru.store');
