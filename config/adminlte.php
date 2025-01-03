@@ -337,6 +337,10 @@ return [
                     'text' => 'Tambah Calon Karyawan',
                     'url' => '/karyawan-baru/create',
                 ],
+                [
+                    'text' => 'List Calon Karyawan',
+                    'url' => '/karyawan',
+                ],
             ]
         ],
         [

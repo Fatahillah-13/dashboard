@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\KaryawanBaruController;
+use App\Models\KaryawanBaru;
 
 // Route::get('/', function () {
 //     return view('home');
@@ -17,9 +18,9 @@ Route::get('/admin/profile', function () {
 });
 
 // Route to list calon karyawan page
-Route::get('/list-new-member', function () {
-    return view('list_new_member');
-});
+// Route::get('/list-new-member', function () {
+//     return view('list_new_member');
+// });
 
 // Route to list ambil foto page
 Route::get('/list-take-photo', function () {
@@ -34,3 +35,9 @@ Route::get('/karyawan-baru/create', function () {
 })->name('karyawan-baru.create');;
 
 Route::post('/karyawan-baru/create', [KaryawanBaruController::class, 'store'])->name('karyawan-baru.store');
+
+Route::get('/karyawan', [KaryawanBaruController::class, 'index']);
+Route::get('/api/karyawan', [KaryawanBaruController::class, 'getUsers'])->name('api.users');
+Route::get('/api/karyawan/{id}', [KaryawanBaruController::class, 'show']);
+Route::post('/api/karyawan/update/{id}', [KaryawanBaruController::class, 'update'])->name('api.users.update');
+Route::delete('/api/karyawan/delete/{id}', [KaryawanBaruController::class, 'destroy'])->name('api.users.delete');

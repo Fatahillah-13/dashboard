@@ -12,10 +12,15 @@
 {{-- Extend and customize the page content header --}}
 
 @section('content_header')
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     @hasSection('content_header_title')
         <h1 class="text-muted">
             @yield('content_header_title')
-
             @hasSection('content_header_subtitle')
                 <small class="text-dark">
                     <i class="fas fa-xs fa-angle-right text-muted"></i>
@@ -62,12 +67,12 @@
     <style type="text/css">
         {{-- You can add AdminLTE customizations here --}}
         /*
-        .card-header {
-            border-bottom: none;
-        }
-        .card-title {
-            font-weight: 600;
-        }
-        */
+            .card-header {
+                border-bottom: none;
+            }
+            .card-title {
+                font-weight: 600;
+            }
+            */
     </style>
 @endpush
