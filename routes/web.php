@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\KaryawanBaruController;
 use App\Models\KaryawanBaru;
 
-// Route::get('/', function () {
-//     return view('home');
-// });
+Route::get('/', function () {
+    return view('home');
+});
 
 // Route to Login and Register page
 Auth::routes();
@@ -41,3 +41,5 @@ Route::get('/api/karyawan', [KaryawanBaruController::class, 'getUsers'])->name('
 Route::get('/api/karyawan/{id}', [KaryawanBaruController::class, 'show']);
 Route::post('/api/karyawan/update/{id}', [KaryawanBaruController::class, 'update'])->name('api.users.update');
 Route::delete('/api/karyawan/delete/{id}', [KaryawanBaruController::class, 'destroy'])->name('api.users.delete');
+
+Route::post('/api/karyawan/foto', [KaryawanBaruController::class, 'storeFoto'])->name('api.karyawan.foto.store');

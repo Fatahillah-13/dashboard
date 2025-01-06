@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\KaryawanBaru;
+use App\Models\GambarKaryawan;
+use Illuminate\Support\Facades\Storage;
 
 class KaryawanBaruController extends Controller
 {
@@ -59,5 +61,28 @@ class KaryawanBaruController extends Controller
         KaryawanBaru::create($validatedData);
 
         return redirect()->back()->with('success', 'Data karyawan baru berhasil ditambahkan.');
+    }
+
+    public function storeFoto(Request $request)
+    {
+        $image = $request->input('image'); // Ambil data gambar dari request
+        $image = str_replace('data:image/jpeg;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $imageName = 'pic_' . time() . '.jpeg';
+
+        file_put_contents(public_path('storage/' . $imageName), base64_decode($image));
+
+        // Simpan data ke database
+        // $capture = new GambarKaryawan();
+        // $capture->karyawan_id = $request->input('karyawan_id');
+        // $capture->image = $imageName;
+        // $capture->save();
+
+        GambarKaryawan::create([
+                'karyawan_id' => $request->input('karyawan_id'),
+                 'foto' => $imageName,
+            ]);
+
+        return response()->json(['message' => 'Image saved successfully']);
     }
 }
