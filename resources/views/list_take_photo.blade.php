@@ -12,6 +12,13 @@
         <h1>Ambil Foto Karyawan</h1>
 
         <x-karyawan-dropdown />
+        <x-adminlte-input name="iNum" label="Number" id="no_foto" placeholder="number" type="number" igroup-size="lg" min=1 max=10>
+            <x-slot name="appendSlot">
+                <div class="input-group-text bg-dark">
+                    <i class="fas fa-hashtag"></i>
+                </div>
+            </x-slot>
+        </x-adminlte-input>
 
         <div class="mt-3" d-flex>
             <div id="my_camera" style="margin-right: 20px;"></div>
@@ -32,7 +39,6 @@
     <script langguage="Javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script>
-
         Webcam.set({
             width: 320,
             height: 240,
@@ -74,6 +80,8 @@
         // Event Listener untuk Tombol Simpan
         saveBtn.addEventListener('click', () => {
             let karyawan_id = document.getElementById('karyawanSelect').value;
+            let no_foto = document.getElementById('no_foto').value;
+
 
             // Kirim ke Server
             fetch("{{ route('api.karyawan.foto.store') }}", {
@@ -84,6 +92,7 @@
                     },
                     body: JSON.stringify({
                         karyawan_id: parseInt(karyawan_id),
+                        no_foto: parseInt(no_foto),
                         image: dataUri,
                     })
                 })

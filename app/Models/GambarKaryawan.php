@@ -15,6 +15,7 @@ class GambarKaryawan extends Model
     // Kolom-kolom yang dapat diisi secara massal
     protected $fillable = [
         'karyawan_id',
+        'no_foto',
         'foto',
     ];
 

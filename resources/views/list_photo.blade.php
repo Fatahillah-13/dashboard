@@ -13,7 +13,8 @@
     <table id="photo-table" class="table table-bordered">
         <thead>
             <tr>
-                <th>ID </th>
+                <th>No </th>
+                <th>No.Foto </th>
                 <th>Karyawan</th>
                 <th>Foto</th>
                 <th>Created At</th>
@@ -50,6 +51,10 @@
                 columns: [{
                         data: 'id',
                         name: 'id',
+                    },
+                    {
+                        data: 'no_foto',
+                        name: 'no_foto'
                     },
                     {
                         data: 'karyawan_id',

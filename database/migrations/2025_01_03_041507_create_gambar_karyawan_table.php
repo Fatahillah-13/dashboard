@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('gambar_karyawan', function (Blueprint $table) {
             $table->id();
             $table->foreignId('karyawan_id')->constrained('karyawan_barus')->onDelete('cascade');
+            $table->no_foto();
             $table->string('foto');
             $table->timestamps();
         });

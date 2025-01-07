@@ -108,6 +108,7 @@ class KaryawanBaruController extends Controller
 
         GambarKaryawan::create([
             'karyawan_id' => $request->input('karyawan_id'),
+            'no_foto' => $request->input('no_foto'),
             'foto' => $imageName,
         ]);
 
