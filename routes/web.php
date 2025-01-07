@@ -30,16 +30,26 @@ Route::get('/list-take-photo', function () {
 // Route to Home page
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// Route to Karyawan Baru page
 Route::get('/karyawan-baru/create', function () {
     return view('form_karyawan_baru');
 })->name('karyawan-baru.create');;
 
-Route::post('/karyawan-baru/create', [KaryawanBaruController::class, 'store'])->name('karyawan-baru.store');
+// Route to list photo page
+Route::get('/photo', function () {
+    return view('list_photo');
+});
 
+// Route to Karyawan page (CRUD karyawan)
 Route::get('/karyawan', [KaryawanBaruController::class, 'index']);
-Route::get('/api/karyawan', [KaryawanBaruController::class, 'getUsers'])->name('api.users');
 Route::get('/api/karyawan/{id}', [KaryawanBaruController::class, 'show']);
+Route::get('/api/karyawan', [KaryawanBaruController::class, 'getUsers'])->name('api.users');
+Route::post('/karyawan-baru/create', [KaryawanBaruController::class, 'store'])->name('karyawan-baru.store');
 Route::post('/api/karyawan/update/{id}', [KaryawanBaruController::class, 'update'])->name('api.users.update');
 Route::delete('/api/karyawan/delete/{id}', [KaryawanBaruController::class, 'destroy'])->name('api.users.delete');
 
+// Route to Add Photo
 Route::post('/api/karyawan/foto', [KaryawanBaruController::class, 'storeFoto'])->name('api.karyawan.foto.store');
+
+// Route to list photo page
+Route::get('/api/photo', [KaryawanBaruController::class, 'getPhotoList'])->name('api.photo');

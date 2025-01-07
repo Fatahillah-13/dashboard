@@ -18,4 +18,9 @@ class KaryawanBaru extends Model
         'level',
         'departemen',
     ];
+    // Definisikan relasi satu ke satu  
+    public function gambarKaryawan()
+    {
+        return $this->hasOne(GambarKaryawan::class, 'karyawan_id');
+    }
 }

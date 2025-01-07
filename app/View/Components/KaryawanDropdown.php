@@ -15,7 +15,7 @@ class KaryawanDropdown extends Component
      */
     public function __construct()
     {
-        $this->karyawans = KaryawanBaru::all();
+        $this->karyawans = KaryawanBaru::doesntHave('gambarKaryawan')->get();
     }
 
     /**
@@ -23,6 +23,7 @@ class KaryawanDropdown extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.karyawan-dropdown');
+        $karyawans = KaryawanBaru::doesntHave('gambarKaryawan')->get();
+        return view('components.karyawan-dropdown', compact('karyawans'));
     }
 }

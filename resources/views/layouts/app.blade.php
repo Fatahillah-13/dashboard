@@ -19,7 +19,7 @@
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     @hasSection('content_header_title')
-        <h1 class="text-muted">
+        {{-- <h1 class="text-muted">
             @yield('content_header_title')
             @hasSection('content_header_subtitle')
                 <small class="text-dark">
@@ -27,7 +27,7 @@
                     @yield('content_header_subtitle')
                 </small>
             @endif
-        </h1>
+        </h1> --}}
     @endif
 @stop
 
@@ -67,12 +67,12 @@
     <style type="text/css">
         {{-- You can add AdminLTE customizations here --}}
         /*
-            .card-header {
-                border-bottom: none;
-            }
-            .card-title {
-                font-weight: 600;
-            }
-            */
+                .card-header {
+                    border-bottom: none;
+                }
+                .card-title {
+                    font-weight: 600;
+                }
+                */
     </style>
 @endpush

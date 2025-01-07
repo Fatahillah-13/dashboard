@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\KaryawanBaru;
 use App\Models\GambarKaryawan;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class KaryawanBaruController extends Controller
 {
@@ -63,6 +64,19 @@ class KaryawanBaruController extends Controller
         return redirect()->back()->with('success', 'Data karyawan baru berhasil ditambahkan.');
     }
 
+    public function getPhotoList()
+    {
+       
+        $karyawans = GambarKaryawan::all(); // Ambil semua data pengguna
+        return datatables()->of($karyawans) // Menggunakan DataTables
+            ->addColumn('action', function ($karyawans) {
+                return '<button class="btn btn-success btn-sm edit" data-id="' . $karyawans->id . '">Foto</button>
+                        <button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
+                        <button class="btn btn-danger btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
+            })
+            ->rawColumns(['action'])
+            ->make(true); // Menggunakan DataTables
+    }
     public function storeFoto(Request $request)
     {
         $image = $request->input('image'); // Ambil data gambar dari request
@@ -79,9 +93,9 @@ class KaryawanBaruController extends Controller
         // $capture->save();
 
         GambarKaryawan::create([
-                'karyawan_id' => $request->input('karyawan_id'),
-                 'foto' => $imageName,
-            ]);
+            'karyawan_id' => $request->input('karyawan_id'),
+            'foto' => $imageName,
+        ]);
 
         return response()->json(['message' => 'Image saved successfully']);
     }

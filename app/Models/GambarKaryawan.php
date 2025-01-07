@@ -17,4 +17,10 @@ class GambarKaryawan extends Model
         'karyawan_id',
         'foto',
     ];
+
+    // Definisikan relasi banyak ke satu  
+    public function karyawan()
+    {
+        return $this->belongsTo(KaryawanBaru::class, 'karyawan_id');
+    }
 }

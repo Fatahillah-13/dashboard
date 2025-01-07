@@ -344,8 +344,13 @@ return [
             ]
         ],
         [
-            'text' => 'List Ambil Foto',
+            'text' => 'Ambil Foto',
             'url' => 'list-take-photo',
+            'icon' => 'fas fa fa-camera',
+        ],
+        [
+            'text' => 'List Ambil Foto',
+            'url' => 'photo',
             'icon' => 'fas fa fa-camera',
         ],
         [
