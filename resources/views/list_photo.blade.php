@@ -14,7 +14,7 @@
         <thead>
             <tr>
                 <th>ID </th>
-                <th>ID Karyawan</th>
+                <th>Karyawan</th>
                 <th>Foto</th>
                 <th>Created At</th>
                 <th>Updated At</th>

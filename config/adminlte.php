@@ -330,7 +330,7 @@ return [
         ],
         [
             'text' => 'List Calon Karyawan',
-            'url' => 'list-new-member',
+            'url' => '',
             'icon' => 'fas fa fa-users',
             'submenu' => [
                 [
@@ -344,14 +344,19 @@ return [
             ]
         ],
         [
-            'text' => 'Ambil Foto',
-            'url' => 'list-take-photo',
+            'text' => 'Foto',
+            'url' => '',
             'icon' => 'fas fa fa-camera',
-        ],
-        [
-            'text' => 'List Ambil Foto',
-            'url' => 'photo',
-            'icon' => 'fas fa fa-camera',
+            'submenu' => [
+                [
+                    'text' => 'Ambil Foto',
+                    'url' => 'list-take-photo',
+                ],
+                [
+                    'text' => 'List Sudah Foto',
+                    'url' => 'photo',
+                ],
+            ]
         ],
         [
             'text' => 'profile',

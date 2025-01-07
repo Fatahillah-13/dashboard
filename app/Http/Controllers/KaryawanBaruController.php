@@ -19,6 +19,12 @@ class KaryawanBaruController extends Controller
     {
         $karyawans = KaryawanBaru::all(); // Ambil semua data pengguna
         return datatables()->of($karyawans) // Menggunakan DataTables
+            ->addColumn('created_at', function ($gambar) {
+                return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
+            })
+            ->addColumn('updated_at', function ($gambar) {
+                return $gambar->updated_at->format('Y-m-d H:i:s'); // Format tanggal  
+            })
             ->addColumn('action', function ($karyawans) {
                 return '<button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
                         <button class="btn btn-danger btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
@@ -66,12 +72,20 @@ class KaryawanBaruController extends Controller
 
     public function getPhotoList()
     {
-       
-        $karyawans = GambarKaryawan::all(); // Ambil semua data pengguna
+
+        $karyawans = GambarKaryawan::with('karyawan')->select('gambar_karyawan.*'); // Ambil semua data pengguna
         return datatables()->of($karyawans) // Menggunakan DataTables
+            ->addColumn('karyawan_id', function ($gambar) {
+                return $gambar->karyawan ? $gambar->karyawan->nama : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+            })
+            ->addColumn('created_at', function ($gambar) {
+                return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
+            })
+            ->addColumn('updated_at', function ($gambar) {
+                return $gambar->updated_at->format('Y-m-d H:i:s'); // Format tanggal  
+            })
             ->addColumn('action', function ($karyawans) {
-                return '<button class="btn btn-success btn-sm edit" data-id="' . $karyawans->id . '">Foto</button>
-                        <button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
+                return '<button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
                         <button class="btn btn-danger btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
             })
             ->rawColumns(['action'])
