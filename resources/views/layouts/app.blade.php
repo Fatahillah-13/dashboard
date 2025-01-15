@@ -20,7 +20,6 @@
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <style>
         .dataTables_wrapper {
-            overflow-x: auto;
             width: 100%;
         }
 

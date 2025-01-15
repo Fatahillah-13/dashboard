@@ -55,7 +55,6 @@ class KaryawanBaruController extends Controller
         ]);
         $karyawans = KaryawanBaru::find($id);
         $karyawans->update($request->all());
-        return response()->json(['success' => 'User updated successfully.']);
     }
 
     public function destroy($id)
@@ -73,8 +72,6 @@ class KaryawanBaruController extends Controller
         ]);
 
         KaryawanBaru::create($validatedData);
-
-        return redirect()->back()->with('success', 'Data karyawan baru berhasil ditambahkan.');
     }
 
     public function getPhotoList()

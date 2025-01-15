@@ -9,6 +9,11 @@
 {{-- Content body: main page content --}}
 
 @section('content_body')
+    <div class="row pb-3">
+        <button type="button" class="btn btn-primary mx-2" data-toggle="modal" data-target="#createModal">+ Tambah
+            Karyawan</button>
+        <button type="button" class="btn btn-success mx-2">Generate NIK Karyawan</button>
+    </div>
     {{-- Table --}}
     <table id="users-table" class="table table-bordered">
         <thead>
@@ -27,32 +32,33 @@
     </table>
 
     {{-- Modal Create --}}
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Karyawan</h5>
+                    <h5 class="modal-title" id="createModalLabel">Tambah Karyawan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="editForm">
+                    <form id="createForm">
                         @csrf
-                        <input type="hidden" id="userId">
+                        <input type="hidden">
                         <div class="form-group">
                             <label for="nama">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama" required>
+                            <input type="text" class="form-control" id="nama_karyawan" name="nama" required>
                         </div>
                         <div class="form-group">
                             <label for="level">Level</label>
-                            <input type="text" class="form-control" id="level" name="level" required>
+                            <input type="text" class="form-control" id="level_karyawan" name="level" required>
                         </div>
                         <div class="form-group">
                             <label for="departemen">Departemen</label>
-                            <input type="text" class="form-control" id="departemen" name="departemen" required>
+                            <input type="text" class="form-control" id="departemen_karyawan" name="departemen" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
                     </form>
                 </div>
             </div>
@@ -60,7 +66,8 @@
     </div>
 
     {{-- Modal Edit --}}
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -75,15 +82,15 @@
                         <input type="hidden" id="userId">
                         <div class="form-group">
                             <label for="nama">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama" required>
+                            <input type="text" class="form-control" id="nama" name="nama">
                         </div>
                         <div class="form-group">
                             <label for="level">Level</label>
-                            <input type="text" class="form-control" id="level" name="level" required>
+                            <input type="text" class="form-control" id="level" name="level">
                         </div>
                         <div class="form-group">
                             <label for="departemen">Departemen</label>
-                            <input type="text" class="form-control" id="departemen" name="departemen" required>
+                            <input type="text" class="form-control" id="departemen" name="departemen">
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
@@ -111,11 +118,12 @@
             }
         });
     </script>
-    {{-- View --}}
+    {{-- CRUD --}}
     <script>
         $(document).ready(function() {
-            $('#users-table').DataTable({
+            var table = $('#users-table').DataTable({
                 scrollX: true,
+                scrollY: true,
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('api.users') }}',
@@ -157,53 +165,61 @@
                     }
                 ]
             });
-        });
-    </script>
-    {{-- Edit --}}
-    <script>
-        // Edit button click
-        $('#users-table').on('click', '.edit', function() {
-            var id = $(this).data('id');
-            $.get('/api/karyawan/' + id, function(data) {
-                $('#userId').val(data.id);
-                $('#nama').val(data.nama);
-                $('#level').val(data.level);
-                $('#departemen').val(data.departemen);
-                $('#editModal').modal('show');
-            });
-        });
-
-        // Update form submit
-        $('#editForm').on('submit', function(e) {
-            e.preventDefault();
-            var id = $('#userId').val();
-            $.ajax({
-                url: '/api/karyawan/update/' + id,
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    $('#editModal').modal('hide');
-                    table.ajax.reload();
-                    alert(response.success);
-                }
-            });
-        });
-    </script>
-    {{-- Delete --}}
-    <script>
-        // Delete button click
-        $('#users-table').on('click', '.delete', function() {
-            var id = $(this).data('id');
-            if (confirm('Are you sure you want to delete this user?')) {
+            // Create form submit
+            $('#createForm').on('submit', function(e) {
+                e.preventDefault();
+                var id = $('#userId').val();
                 $.ajax({
-                    url: '/api/karyawan/delete/' + id,
-                    type: 'DELETE',
+                    url: '/karyawan-baru/create',
+                    type: 'POST',
+                    data: $(this).serialize(),
                     success: function(response) {
+                        $('#createModal').modal('hide');
                         table.ajax.reload();
-                        alert(response.success);
                     }
                 });
-            }
+            });
+
+            // Edit button click
+            $('#users-table').on('click', '.edit', function() {
+                var id = $(this).data('id');
+                $.get('/api/karyawan/' + id, function(data) {
+                    $('#userId').val(data.id);
+                    $('#nama').val(data.nama);
+                    $('#level').val(data.level);
+                    $('#departemen').val(data.departemen);
+                    $('#editModal').modal('show');
+                });
+            });
+
+            // Update form submit
+            $('#editForm').on('submit', function(e) {
+                e.preventDefault();
+                var id = $('#userId').val();
+                $.ajax({
+                    url: '/api/karyawan/update/' + id,
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#editModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                });
+            });
+
+            // Delete button click
+            $('#users-table').on('click', '.delete', function() {
+                var id = $(this).data('id');
+                if (confirm('Are you sure you want to delete this user?')) {
+                    $.ajax({
+                        url: '/api/karyawan/delete/' + id,
+                        type: 'DELETE',
+                        success: function(response) {
+                            table.ajax.reload();
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endpush
