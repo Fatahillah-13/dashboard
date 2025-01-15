@@ -13,16 +13,51 @@
     <table id="users-table" class="table table-bordered">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>No</th>
+                <th>No. Foto</th>
                 <th>Nama</th>
                 <th>Level</th>
                 <th>Departemen</th>
+                <th>Foto</th>
                 <th>Created At</th>
                 <th>Updated At</th>
                 <th>Action</th>
             </tr>
         </thead>
     </table>
+
+    {{-- Modal Create --}}
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Karyawan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        @csrf
+                        <input type="hidden" id="userId">
+                        <div class="form-group">
+                            <label for="nama">Nama</label>
+                            <input type="text" class="form-control" id="nama" name="nama" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="level">Level</label>
+                            <input type="text" class="form-control" id="level" name="level" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="departemen">Departemen</label>
+                            <input type="text" class="form-control" id="departemen" name="departemen" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Modal Edit --}}
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -80,12 +115,17 @@
     <script>
         $(document).ready(function() {
             $('#users-table').DataTable({
+                scrollX: true,
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('api.users') }}',
                 columns: [{
                         data: 'id',
                         name: 'id'
+                    },
+                    {
+                        data: 'no_foto',
+                        name: 'no_foto'
                     },
                     {
                         data: 'nama',
@@ -98,6 +138,10 @@
                     {
                         data: 'departemen',
                         name: 'departemen'
+                    },
+                    {
+                        data: 'foto',
+                        name: 'foto'
                     },
                     {
                         data: 'created_at',

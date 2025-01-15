@@ -16,6 +16,8 @@
                 <th>No </th>
                 <th>No.Foto </th>
                 <th>Karyawan</th>
+                <th>posisi</th>
+                <th>Departemen</th>
                 <th>Foto</th>
                 <th>Created At</th>
                 <th>Updated At</th>
@@ -59,6 +61,14 @@
                     {
                         data: 'karyawan_id',
                         name: 'karyawan_id'
+                    },
+                    {
+                        data: 'karyawan_position',
+                        name: 'karyawan_position'
+                    },
+                    {
+                        data: 'karyawan_departemen',
+                        name: 'karyawan_departemen'
                     },
                     {
                         data: 'foto',

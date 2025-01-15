@@ -18,6 +18,43 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <style>
+        .dataTables_wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table.dataTable {
+            width: 100%;
+            min-width: 100%;
+        }
+
+        th,
+        td {
+            white-space: nowrap;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            border-bottom: 2px solid #ddd;
+        }
+
+        /* Memastikan lebar header dan kolom sama */
+        .dataTables_scrollHeadInner {
+            width: 100% !important;
+        }
+
+        .dataTables_scrollBody {
+            width: 100% !important;
+        }
+
+        .dataTables_scrollHead table,
+        .dataTables_scrollBody table {
+            width: 100% !important;
+        }
+    </style>
     @hasSection('content_header_title')
         {{-- <h1 class="text-muted">
             @yield('content_header_title')
@@ -67,12 +104,12 @@
     <style type="text/css">
         {{-- You can add AdminLTE customizations here --}}
         /*
-                .card-header {
-                    border-bottom: none;
-                }
-                .card-title {
-                    font-weight: 600;
-                }
-                */
+                        .card-header {
+                            border-bottom: none;
+                        }
+                        .card-title {
+                            font-weight: 600;
+                        }
+                        */
     </style>
 @endpush

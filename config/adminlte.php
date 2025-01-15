@@ -330,77 +330,52 @@ return [
         ],
         [
             'text' => 'List Calon Karyawan',
-            'url' => '',
+            'url' => '/karyawan',
             'icon' => 'fas fa fa-users',
-            'submenu' => [
-                [
-                    'text' => 'Tambah Calon Karyawan',
-                    'url' => '/karyawan-baru/create',
-                ],
-                [
-                    'text' => 'List Calon Karyawan',
-                    'url' => '/karyawan',
-                ],
-            ]
-        ],
-        [
-            'text' => 'Foto',
-            'url' => '',
-            'icon' => 'fas fa fa-camera',
-            'submenu' => [
-                [
-                    'text' => 'Ambil Foto',
-                    'url' => 'list-take-photo',
-                ],
-                [
-                    'text' => 'List Sudah Foto',
-                    'url' => 'photo',
-                ],
-            ]
         ],
         [
             'text' => 'profile',
             'url' => 'admin/profile',
             'icon' => 'fas fa-fw fa-user',
         ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
-                ],
-            ],
-        ],
+        // [
+        //     'text' => 'multilevel',
+        //     'icon' => 'fas fa-fw fa-share',
+        //     'submenu' => [
+        //         [
+        //             'text' => 'level_one',
+        //             'url' => '#',
+        //         ],
+        //         [
+        //             'text' => 'level_one',
+        //             'url' => '#',
+        //             'submenu' => [
+        //                 [
+        //                     'text' => 'level_two',
+        //                     'url' => '#',
+        //                 ],
+        //                 [
+        //                     'text' => 'level_two',
+        //                     'url' => '#',
+        //                     'submenu' => [
+        //                         [
+        //                             'text' => 'level_three',
+        //                             'url' => '#',
+        //                         ],
+        //                         [
+        //                             'text' => 'level_three',
+        //                             'url' => '#',
+        //                         ],
+        //                     ],
+        //                 ],
+        //             ],
+        //         ],
+        //         [
+        //             'text' => 'level_one',
+        //             'url' => '#',
+        //         ],
+        //     ],
+        // ],
         ['header' => 'labels'],
         [
             'text' => 'important',

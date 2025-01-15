@@ -17,8 +17,14 @@ class KaryawanBaruController extends Controller
 
     public function getUsers()
     {
-        $karyawans = KaryawanBaru::all(); // Ambil semua data pengguna
+        $karyawans = KaryawanBaru::with('gambarKaryawan')->select('karyawan_barus.*'); // Ambil semua data pengguna
         return datatables()->of($karyawans) // Menggunakan DataTables
+            ->addColumn('no_foto', function ($gambar) {
+                return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->no_foto : 0; // Menampilkan nama karyawan  
+            })
+            ->addColumn('foto', function ($gambar) {
+                return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->foto : 0; // Menampilkan nama karyawan  
+            })
             ->addColumn('created_at', function ($gambar) {
                 return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
             })
@@ -27,6 +33,7 @@ class KaryawanBaruController extends Controller
             })
             ->addColumn('action', function ($karyawans) {
                 return '<button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
+                        <button class="btn btn-success btn-sm edit" data-id="' . $karyawans->id . '">Take Picture</button>
                         <button class="btn btn-danger btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
             })
             ->rawColumns(['action'])
@@ -78,6 +85,12 @@ class KaryawanBaruController extends Controller
             ->addColumn('karyawan_id', function ($gambar) {
                 return $gambar->karyawan ? $gambar->karyawan->nama : 'Tidak Diketahui'; // Menampilkan nama karyawan  
             })
+            ->addColumn('karyawan_position', function ($gambar) {
+                return $gambar->karyawan ? $gambar->karyawan->level : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+            })
+            ->addColumn('karyawan_departemen', function ($gambar) {
+                return $gambar->karyawan ? $gambar->karyawan->departemen : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+            })
             ->addColumn('created_at', function ($gambar) {
                 return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
             })
@@ -86,6 +99,7 @@ class KaryawanBaruController extends Controller
             })
             ->addColumn('action', function ($karyawans) {
                 return '<button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
+                        <button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Take Picture</button>
                         <button class="btn btn-danger btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
             })
             ->rawColumns(['action'])
