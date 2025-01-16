@@ -12,7 +12,8 @@
     <div class="row pb-3">
         <button type="button" class="btn btn-primary mx-2" data-toggle="modal" data-target="#createModal">+ Tambah
             Karyawan</button>
-        <button type="button" class="btn btn-success mx-2">Generate NIK Karyawan</button>
+        <button type="button" class="btn btn-success mx-2" data-toggle="modal" data-target="#nikModal">Generate NIK
+            Karyawan</button>
     </div>
     {{-- Table --}}
     <table id="users-table" class="table table-bordered">
@@ -24,8 +25,8 @@
                 <th>Level</th>
                 <th>Departemen</th>
                 <th>Foto</th>
-                <th>Created At</th>
-                <th>Updated At</th>
+                <th>Tgl. Input</th>
+                <th>Tgl. Foto</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -92,6 +93,15 @@
                             <label for="departemen">Departemen</label>
                             <input type="text" class="form-control" id="departemen" name="departemen">
                         </div>
+                        {{-- <div class="form-group">
+                            <label for="foto">Foto</label>
+                            <div id="my_camera"></div>
+                            <button id="toggleWebcamBtn" class="btn btn-primary">Nyalakan Kamera</button>
+                            <button id="captureBtn" class="btn btn-success mt-1" style="display: none;">Capture</button>
+                            <button id="retakeBtn" class="btn btn-warning mt-1" style="display: none;">Retake</button>
+                            <button id="saveBtn" class="btn btn-primary mt-1" style="display: none;">Simpan</button>
+                            <div id="result" style="margin-top: 10px;"></div>
+                        </div> --}}
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
                 </div>
@@ -139,6 +149,83 @@
                     <button id="toggleWebcamBtn" class="btn btn-primary">Nyalakan Kamera</button>
                     <button id="captureBtn" class="btn btn-success">Ambil Gambar</button>
                     <button id="saveBtn" class="btn btn-info mt-3">Simpan Foto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Show Foto --}}
+    <div class="modal fade" id="fotoShowModal" tabindex="-1" role="dialog" aria-labelledby="fotoShowModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fotoModalLabel">Foto Karyawan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalShowFoto" src="" alt="Foto Karyawan" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    {{-- Modal Generate NIK --}}
+    <div class="modal fade" id="nikModal" tabindex="-1" role="dialog" aria-labelledby="nikModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nikModalLabel">Tambah Karyawan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="nikForm">
+                        @csrf
+                        <input type="hidden">
+                        <div class="row">
+                            <div class="col-md-8 form-group">
+                                <label for="date">Tanggal</label>
+                                <input type="date" class="form-control" id="date_nik" name="date_nik" required>
+                            </div>
+                            <div class="col-md-4 col align-self-end form-group">
+                                <button class="btn btn-primary">Tampilkan</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 form-group">
+                                <label for="level">NIK Dimulai</label>
+                                <input type="number" class="form-control" id="nikNumber" name="nikNumber">
+                            </div>
+                            <div class="col-md-4 col align-self-end form-group">
+                                <button class="btn btn-success">Generate NIK</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table id="karyawanTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nama</th>
+                                            <th>Level</th>
+                                            <th>Departemen</th>
+                                            <th>Foto</th>
+                                            <th>Tgl Foto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Data akan dimuat di sini -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -210,6 +297,18 @@
                     }
                 ]
             });
+            const fotoModal = new bootstrap.Modal(document.getElementById('fotoShowModal'));
+            const modalFoto = document.getElementById('modalShowFoto');
+
+            $(document).on('click', '.foto-btn', function() {
+                const fotoPath = $(this).data('foto-path');
+                const fotoTitle = $(this).data('foto-title');
+
+                modalFoto.src = fotoPath;
+                document.getElementById('fotoModalLabel').textContent = fotoTitle;
+                fotoModal.show();
+            });
+
             // Create form submit
             $('#createForm').on('submit', function(e) {
                 e.preventDefault();

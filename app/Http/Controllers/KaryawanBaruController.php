@@ -22,21 +22,32 @@ class KaryawanBaruController extends Controller
             ->addColumn('no_foto', function ($gambar) {
                 return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->no_foto : 0; // Menampilkan nama karyawan  
             })
-            ->addColumn('foto', function ($gambar) {
-                return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->foto : 0; // Menampilkan nama karyawan  
+            ->addColumn('foto', function ($karyawan) {
+                if ($karyawan->gambarKaryawan && $karyawan->gambarKaryawan->foto) {
+                    $fotoPath = asset('storage/' . $karyawan->gambarKaryawan->foto);
+                    $fotoTitle = $karyawan->gambarKaryawan->foto;
+                    return '<button class="btn btn-primary foto-btn" data-foto-path="' . $fotoPath . '" data-foto-title="' . $fotoTitle . '">' . $fotoTitle . '</button>';
+                }
+                return 'Tidak ada foto';
             })
             ->addColumn('created_at', function ($gambar) {
                 return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
             })
             ->addColumn('updated_at', function ($gambar) {
-                return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->updated_at->format('Y-m-d H:i:s'):$gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
+                return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->updated_at->format('Y-m-d H:i:s') : 'Belum Ada Foto'; // Format tanggal  
             })
-            ->addColumn('action', function ($karyawans) {
-                return '<button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
-                        <button class="btn btn-success btn-sm foto" data-id="' . $karyawans->id . '">Take Picture</button>
-                        <button class="btn btn-danger m-1 btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
+            ->addColumn('action', function ($karyawan) {
+                $editButton = '<button class="btn btn-primary mt-1 mr-1 btn-sm edit" data-id="' . $karyawan->id . '">Edit</button>';
+                $deleteButton = '<button class="btn btn-danger mt-1 btn-sm delete" data-id="' . $karyawan->id . '">Delete</button>';
+
+                if ($karyawan->gambarKaryawan && $karyawan->gambarKaryawan->foto) {
+                    return $editButton . $deleteButton;
+                } else {
+                    $takePictureButton = '<button class="btn btn-success mt-1 btn-sm foto" data-id="' . $karyawan->id . '">Take Picture</button>';
+                    return $editButton . $deleteButton . $takePictureButton;
+                }
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['foto', 'action'])
             ->make(true); // Menggunakan DataTables
     }
 
