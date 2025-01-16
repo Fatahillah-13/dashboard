@@ -79,7 +79,7 @@
                 <div class="modal-body">
                     <form id="editForm">
                         @csrf
-                        <input type="hidden" id="userId">
+                        <input type="hidden" id="userId" readonly>
                         <div class="form-group">
                             <label for="nama">Nama</label>
                             <input type="text" class="form-control" id="nama" name="nama">
@@ -94,6 +94,51 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Foto --}}
+    <div class="modal fade" id="fotoModal" tabindex="-1" role="dialog" aria-labelledby="fotoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fotoModalLabel">Foto Karyawan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="fotoform">
+                        @csrf
+                        <input type="hidden" id="userId">
+                        <div class="form-group">
+                            <label for="nama">Nama</label>
+                            <input type="text" class="form-control" id="nama_foto" name="nama" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="level">Level</label>
+                            <input type="text" class="form-control" id="level_foto" name="level" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="departemen">Departemen</label>
+                            <input type="text" class="form-control" id="departemen_foto" name="departemen" readonly>
+                        </div>
+                        <x-adminlte-input name="iNum" label="Number" id="no_foto" placeholder="number"
+                            type="number" igroup-size="lg" min=1 max=10>
+                        </x-adminlte-input>
+                    </form>
+
+                    <div class="mt-3" d-flex>
+                        <div id="my_camera" style="margin-right: 20px;"></div>
+                        <div id="result" class="mt-3"></div>
+                    </div>
+
+                    <button id="toggleWebcamBtn" class="btn btn-primary">Nyalakan Kamera</button>
+                    <button id="captureBtn" class="btn btn-success">Ambil Gambar</button>
+                    <button id="saveBtn" class="btn btn-info mt-3">Simpan Foto</button>
                 </div>
             </div>
         </div>
@@ -118,12 +163,12 @@
             }
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     {{-- CRUD --}}
     <script>
         $(document).ready(function() {
             var table = $('#users-table').DataTable({
                 scrollX: true,
-                scrollY: true,
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('api.users') }}',
@@ -220,6 +265,83 @@
                     });
                 }
             });
+
+            // Foto button click
+            $('#users-table').on('click', '.foto', function() {
+                var id = $(this).data('id');
+                $.get('/api/karyawan/' + id, function(data) {
+                    $('#userId').val(data.id);
+                    $('#nama_foto').val(data.nama);
+                    $('#level_foto').val(data.level);
+                    $('#departemen_foto').val(data.departemen);
+                    $('#fotoModal').modal('show');
+                });
+            });
+        });
+    </script>
+    {{-- CaptureJS --}}
+    <script>
+        Webcam.set({
+            width: 320,
+            height: 240,
+            image_format: 'jpeg',
+            jpeg_quality: 90
+        });
+
+        let toggleWebcamBtn = document.getElementById('toggleWebcamBtn');
+        let captureBtn = document.getElementById('captureBtn');
+        let saveBtn = document.getElementById('saveBtn');
+        let webcamActive = false;
+        let dataUri = '';
+
+        // Event Listener untuk Tombol On/Off Webcam
+        toggleWebcamBtn.addEventListener('click', () => {
+            if (webcamActive) {
+                Webcam.reset();
+                toggleWebcamBtn.textContent = 'Turn On Webcam';
+                captureBtn.style.display = 'none';
+                webcamActive = false;
+            } else {
+                Webcam.attach('#my_camera');
+                toggleWebcamBtn.textContent = 'Turn Off Webcam';
+                captureBtn.style.display = 'block';
+                webcamActive = true;
+            }
+        });
+
+        // Event Listener untuk Tombol Capture
+        captureBtn.addEventListener('click', () => {
+            Webcam.snap(function(uri) {
+                dataUri = uri;
+                // Tampilkan Hasil Gambar
+                document.getElementById('result').innerHTML = `<img src="${dataUri}" />`;
+                saveBtn.style.display = 'block';
+            });
+        });
+
+        // Event Listener untuk Tombol Simpan
+        saveBtn.addEventListener('click', () => {
+            let karyawan_id = document.getElementById('userId').value;
+            let no_foto = document.getElementById('no_foto').value;
+
+            // Kirim ke Server
+            fetch("{{ route('api.karyawan.foto.store') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        karyawan_id: parseInt(karyawan_id),
+                        no_foto: parseInt(no_foto),
+                        image: dataUri,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => console.error(error));
         });
     </script>
 @endpush

@@ -36,7 +36,7 @@
 @endpush
 
 @push('js')
-    <script langguage="Javascript"></script>
+    <script language="Javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script>
         Webcam.set({
@@ -81,7 +81,6 @@
         saveBtn.addEventListener('click', () => {
             let karyawan_id = document.getElementById('karyawanSelect').value;
             let no_foto = document.getElementById('no_foto').value;
-
 
             // Kirim ke Server
             fetch("{{ route('api.karyawan.foto.store') }}", {

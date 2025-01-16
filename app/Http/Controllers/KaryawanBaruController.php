@@ -29,12 +29,12 @@ class KaryawanBaruController extends Controller
                 return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
             })
             ->addColumn('updated_at', function ($gambar) {
-                return $gambar->updated_at->format('Y-m-d H:i:s'); // Format tanggal  
+                return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->updated_at->format('Y-m-d H:i:s'):$gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
             })
             ->addColumn('action', function ($karyawans) {
                 return '<button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
-                        <button class="btn btn-success btn-sm edit" data-id="' . $karyawans->id . '">Take Picture</button>
-                        <button class="btn btn-danger btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
+                        <button class="btn btn-success btn-sm foto" data-id="' . $karyawans->id . '">Take Picture</button>
+                        <button class="btn btn-danger m-1 btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
             })
             ->rawColumns(['action'])
             ->make(true); // Menggunakan DataTables

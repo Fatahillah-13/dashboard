@@ -19,18 +19,19 @@
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <style>
+
         .dataTables_wrapper {
             width: 100%;
         }
 
         table.dataTable {
-            width: 100%;
+            width: auto;
             min-width: 100%;
         }
 
         th,
         td {
-            white-space: nowrap;
+            width: auto;
             padding: 8px;
             text-align: left;
         }
@@ -103,12 +104,12 @@
     <style type="text/css">
         {{-- You can add AdminLTE customizations here --}}
         /*
-                        .card-header {
-                            border-bottom: none;
-                        }
-                        .card-title {
-                            font-weight: 600;
-                        }
-                        */
+                                .card-header {
+                                    border-bottom: none;
+                                }
+                                .card-title {
+                                    font-weight: 600;
+                                }
+                                */
     </style>
 @endpush
