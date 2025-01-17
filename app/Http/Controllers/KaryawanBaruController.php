@@ -136,4 +136,36 @@ class KaryawanBaruController extends Controller
 
         return response()->json(['message' => 'Image saved successfully']);
     }
+
+    public function getKaryawanByDate(Request $request)
+    {
+        $request->validate([
+            'date_nik' => 'required|date',
+        ]);
+
+        // Mengambil data dari tabel karyawan dengan eager loading gambar_karyawan  
+        $karyawans = GambarKaryawan::with('karyawan')
+            ->whereDate('updated_at', $request->date_nik)
+            ->get('gambar_karyawan.*');
+
+        return datatables()::of($karyawans)
+            ->addColumn('no', function ($gambar) {
+                return $gambar->karyawan ? $gambar->karyawan->id : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+            })
+            ->addColumn('nama', function ($gambar) {
+                return $gambar->karyawan ? $gambar->karyawan->nama : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+            })
+            ->addColumn('level', function ($gambar) {
+                return $gambar->karyawan ? $gambar->karyawan->level : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+            })
+            ->addColumn('departemen', function ($gambar) {
+                return $gambar->karyawan ? $gambar->karyawan->departemen : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+            })
+            ->addColumn('created_at', function ($gambar) {
+                return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
+            })
+
+            ->rawColumns(['foto']) // Pastikan 'foto' di sini    
+            ->make(true);
+    }
 }

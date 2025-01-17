@@ -53,3 +53,5 @@ Route::post('/api/karyawan/foto', [KaryawanBaruController::class, 'storeFoto'])-
 
 // Route to list photo page
 Route::get('/api/photo', [KaryawanBaruController::class, 'getPhotoList'])->name('api.photo');
+
+Route::get('/karyawan/byDate', [KaryawanBaruController::class, 'getKaryawanByDate'])->name('api.karyawan.byDate');

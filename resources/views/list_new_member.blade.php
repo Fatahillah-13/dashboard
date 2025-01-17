@@ -176,7 +176,7 @@
     {{-- Modal Generate NIK --}}
     <div class="modal fade" id="nikModal" tabindex="-1" role="dialog" aria-labelledby="nikModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="nikModalLabel">Tambah Karyawan</h5>
@@ -194,7 +194,7 @@
                                 <input type="date" class="form-control" id="date_nik" name="date_nik" required>
                             </div>
                             <div class="col-md-4 col align-self-end form-group">
-                                <button class="btn btn-primary">Tampilkan</button>
+                                <button class="btn btn-primary" id="tampilkanBtn">Tampilkan</button>
                             </div>
                         </div>
                         <div class="row">
@@ -297,6 +297,56 @@
                     }
                 ]
             });
+
+            var karyawanTable = $('#karyawanTable').DataTable({
+                scrollX: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('api.karyawan.byDate') }}',
+                    data: function(d) {
+                        d.date_nik = $('#date_nik').val();
+
+                    }
+                },
+                columns: [{
+                        data: 'no',
+                        name: 'no'
+                    },
+                    {
+                        data: 'nama',
+                        name: 'nama'
+                    },
+                    {
+                        data: 'level',
+                        name: 'level'
+                    },
+                    {
+                        data: 'departemen',
+                        name: 'departemen'
+                    },
+                    {
+                        data: 'foto',
+                        name: 'foto'
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at'
+                    }
+                ],
+                rawColumns: ['foto'], // Pastikan 'foto' di sini  
+                searching: false,
+                paging: false,
+                info: false,
+                deferLoading: 0
+            });
+
+            // Event Listener untuk Tombol Tampilkan  
+            $('#tampilkanBtn').on('click', function(e) {
+                e.preventDefault();
+                karyawanTable.ajax.reload();
+            });
+
             const fotoModal = new bootstrap.Modal(document.getElementById('fotoShowModal'));
             const modalFoto = document.getElementById('modalShowFoto');
 
@@ -376,71 +426,73 @@
                     $('#fotoModal').modal('show');
                 });
             });
+
+            Webcam.set({
+                width: 320,
+                height: 240,
+                image_format: 'jpeg',
+                jpeg_quality: 90
+            });
+
+            let toggleWebcamBtn = document.getElementById('toggleWebcamBtn');
+            let captureBtn = document.getElementById('captureBtn');
+            let saveBtn = document.getElementById('saveBtn');
+            let webcamActive = false;
+            let dataUri = '';
+
+            // Event Listener untuk Tombol On/Off Webcam
+            toggleWebcamBtn.addEventListener('click', () => {
+                if (webcamActive) {
+                    Webcam.reset();
+                    toggleWebcamBtn.textContent = 'Turn On Webcam';
+                    captureBtn.style.display = 'none';
+                    webcamActive = false;
+                } else {
+                    Webcam.attach('#my_camera');
+                    toggleWebcamBtn.textContent = 'Turn Off Webcam';
+                    captureBtn.style.display = 'block';
+                    webcamActive = true;
+                }
+            });
+
+            // Event Listener untuk Tombol Capture
+            captureBtn.addEventListener('click', () => {
+                Webcam.snap(function(uri) {
+                    dataUri = uri;
+                    // Tampilkan Hasil Gambar
+                    document.getElementById('result').innerHTML = `<img src="${dataUri}" />`;
+                    saveBtn.style.display = 'block';
+                });
+            });
+
+            // Event Listener untuk Tombol Simpan
+            saveBtn.addEventListener('click', () => {
+                let karyawan_id = document.getElementById('userId').value;
+                let no_foto = document.getElementById('no_foto').value;
+
+                // Kirim ke Server
+                fetch("{{ route('api.karyawan.foto.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            karyawan_id: parseInt(karyawan_id),
+                            no_foto: parseInt(no_foto),
+                            image: dataUri,
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        table.ajax.reload();
+
+                    })
+                    .catch(error => console.error(error));
+            });
         });
     </script>
     {{-- CaptureJS --}}
-    <script>
-        Webcam.set({
-            width: 320,
-            height: 240,
-            image_format: 'jpeg',
-            jpeg_quality: 90
-        });
-
-        let toggleWebcamBtn = document.getElementById('toggleWebcamBtn');
-        let captureBtn = document.getElementById('captureBtn');
-        let saveBtn = document.getElementById('saveBtn');
-        let webcamActive = false;
-        let dataUri = '';
-
-        // Event Listener untuk Tombol On/Off Webcam
-        toggleWebcamBtn.addEventListener('click', () => {
-            if (webcamActive) {
-                Webcam.reset();
-                toggleWebcamBtn.textContent = 'Turn On Webcam';
-                captureBtn.style.display = 'none';
-                webcamActive = false;
-            } else {
-                Webcam.attach('#my_camera');
-                toggleWebcamBtn.textContent = 'Turn Off Webcam';
-                captureBtn.style.display = 'block';
-                webcamActive = true;
-            }
-        });
-
-        // Event Listener untuk Tombol Capture
-        captureBtn.addEventListener('click', () => {
-            Webcam.snap(function(uri) {
-                dataUri = uri;
-                // Tampilkan Hasil Gambar
-                document.getElementById('result').innerHTML = `<img src="${dataUri}" />`;
-                saveBtn.style.display = 'block';
-            });
-        });
-
-        // Event Listener untuk Tombol Simpan
-        saveBtn.addEventListener('click', () => {
-            let karyawan_id = document.getElementById('userId').value;
-            let no_foto = document.getElementById('no_foto').value;
-
-            // Kirim ke Server
-            fetch("{{ route('api.karyawan.foto.store') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({
-                        karyawan_id: parseInt(karyawan_id),
-                        no_foto: parseInt(no_foto),
-                        image: dataUri,
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                })
-                .catch(error => console.error(error));
-        });
-    </script>
+    <script></script>
 @endpush
