@@ -14,13 +14,27 @@ class KaryawanBaru extends Model
 
     // Kolom-kolom yang dapat diisi secara massal
     protected $fillable = [
+        'nik',
         'nama',
         'level',
-        'departemen',
+        'workplace',
+        'tempat_lahir',
+        'tgl_lahir',
+        'tgl_masuk',
     ];
     // Definisikan relasi satu ke satu  
     public function gambarKaryawan()
     {
         return $this->hasOne(GambarKaryawan::class, 'karyawan_id');
+    }
+
+    public function posisi()  
+    {  
+        return $this->belongsTo(Posisi::class, 'level');  
+    }  
+  
+    public function departemen()  
+    {  
+        return $this->belongsTo(Departemen::class, 'workplace');
     }
 }

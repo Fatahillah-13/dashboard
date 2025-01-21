@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KaryawanBaru;
 use App\Models\GambarKaryawan;
+use App\Models\Posisi;
+use App\Models\Departemen;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -12,12 +14,12 @@ class KaryawanBaruController extends Controller
 {
     public function index()
     {
-        return view('list_new_member'); // Ganti dengan nama view Anda
+        return view('list_new_member');
     }
 
     public function getUsers()
     {
-        $karyawans = KaryawanBaru::with('gambarKaryawan')->select('karyawan_barus.*'); // Ambil semua data pengguna
+        $karyawans = KaryawanBaru::with('gambarKaryawan', 'posisi', 'departemen')->select('karyawan_barus.*'); // Ambil semua data pengguna
         return datatables()->of($karyawans) // Menggunakan DataTables
             ->addColumn('no_foto', function ($gambar) {
                 return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->no_foto : 0; // Menampilkan nama karyawan  
@@ -29,6 +31,12 @@ class KaryawanBaruController extends Controller
                     return '<button class="btn btn-primary foto-btn" data-foto-path="' . $fotoPath . '" data-foto-title="' . $fotoTitle . '">' . $fotoTitle . '</button>';
                 }
                 return 'Tidak ada foto';
+            })
+            ->addColumn('level', function ($karyawan) {
+                return $karyawan->posisi ? $karyawan->posisi->level : 'Tidak ada posisi';
+            })
+            ->addColumn('workplace', function ($karyawan) {  
+                return $karyawan->departemen ? $karyawan->departemen->workplace : 'Tidak ada departemen';  
             })
             ->addColumn('created_at', function ($gambar) {
                 return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
@@ -60,9 +68,13 @@ class KaryawanBaruController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'nik' => 'required|string|max:255',
             'nama' => 'required|string|max:255',
-            'level' => 'required|string|max:255',
-            'departemen' => 'required|string|max:255',
+            'level' => 'required|exists:posisi,id',
+            'workplace' => 'required|exists:departemen,id',
+            'tempat_lahir' => 'required|string|max:255',
+            'tgl_lahir' => 'required|date',
+            'tgl_masuk' => 'required|date',
         ]);
         $karyawans = KaryawanBaru::find($id);
         $karyawans->update($request->all());
@@ -77,9 +89,13 @@ class KaryawanBaruController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'nik' => '',
             'nama' => '',
             'level' => '',
-            'departemen' => '',
+            'workplace' => '',
+            'tempat_lahir' => '',
+            'tgl_lahir' => '',
+            'tgl_masuk' => '',
         ]);
 
         KaryawanBaru::create($validatedData);

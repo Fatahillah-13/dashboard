@@ -9,12 +9,92 @@
 {{-- Content body: main page content --}}
 
 @section('content_body')
+    {{-- Input Section --}}
+    <div class="container p-4">
+        <div class="row">
+            {{-- Form Input --}}
+            <div class="col md-6">
+                <form id="karyawanForm" method="POST" action="{{ route('karyawan-baru.store') }}">
+                    @csrf
+                    <div class="row">
+                        <div class="col md-6">
+                            <input type="number" class="form-control" id="id" name="id" hidden>
+                            <div class="mb-3">
+                                <label for="nik" class="form-label">NIK</label>
+                                <input type="text" class="form-control" id="nik" name="nik">
+                            </div>
+                            <div class="mb-3">
+                                <label for="posisi">Level</label>
+                                <x-posisi-dropdown />
+                            </div>
+                            <div class="mb-3">
+                                <label for="workplace">Departemen</label>
+                                <x-departemen-dropdown />
+                            </div>
+                            <div class="mb-3">
+                                <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                                <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir" required>
+                            </div>
+                        </div>
+                        <div class="col md-6 mx-3">
+                            <div class="mb-3">
+                                <label for="nama" class="form-label">Nama</label>
+                                <input type="text" class="form-control" id="nama" name="nama" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
+                                <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tgl_masuk" class="form-label">Tanggal Masuk</label>
+                                <input type="date" class="form-control" id="tgl_masuk" name="tgl_masuk" required>
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {{-- WebcamCapture --}}
+            <div class="col md-6">
+                <div class="row justify-content-center mb-3">
+                    <div class="col md-6">
+                        <div id="my_camera" class="d-flex justify-content-center">
+                            <img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture" srcset=""
+                                style="width: 150px" height="150px">
+                        </div>
+                    </div>
+                    <div class="col md-6">
+                        <div id="result" class="d-flex justify-content-center">
+                            <img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture" srcset=""
+                                style="width: 150px" height="150px">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col md-4 d-flex justify-content-center">
+                        <button id="toggleWebcamBtn" class="btn btn-primary">Nyalakan Kamera</button>
+                    </div>
+                    <div class="col md-4 d-flex justify-content-center">
+                        <button id="captureBtn" class="btn btn-success">Ambil Gambar</button>
+                    </div>
+                    <div class="col md-4 d-flex justify-content-center">
+                        <button id="saveBtn" class="btn btn-info">Simpan Foto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Buttons --}}
     <div class="row pb-3">
         <button type="button" class="btn btn-primary mx-2" data-toggle="modal" data-target="#createModal">+ Tambah
             Karyawan</button>
         <button type="button" class="btn btn-success mx-2" data-toggle="modal" data-target="#nikModal">Generate NIK
             Karyawan</button>
     </div>
+
     {{-- Table --}}
     <table id="users-table" class="table table-bordered">
         <thead>
@@ -44,9 +124,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="createForm">
+                    <form id="">
                         @csrf
-                        <input type="hidden">
+                        <input type="number" class="form-control" id="id" name="id" type="hidden">
                         <div class="form-group">
                             <label for="nama">Nama</label>
                             <input type="text" class="form-control" id="nama_karyawan" name="nama" required>
@@ -57,7 +137,8 @@
                         </div>
                         <div class="form-group">
                             <label for="departemen">Departemen</label>
-                            <input type="text" class="form-control" id="departemen_karyawan" name="departemen" required>
+                            <input type="text" class="form-control" id="departemen_karyawan" name="departemen"
+                                required>
                         </div>
                         <button type="submit" class="btn btn-primary">Tambah</button>
                     </form>
@@ -258,6 +339,7 @@
                 scrollX: true,
                 processing: true,
                 serverSide: true,
+                autowidth: true,
                 ajax: '{{ route('api.users') }}',
                 columns: [{
                         data: 'id',
@@ -276,8 +358,8 @@
                         name: 'level'
                     },
                     {
-                        data: 'departemen',
-                        name: 'departemen'
+                        data: 'workplace',
+                        name: 'workplace'
                     },
                     {
                         data: 'foto',
@@ -322,8 +404,8 @@
                         name: 'level'
                     },
                     {
-                        data: 'departemen',
-                        name: 'departemen'
+                        data: 'workplace',
+                        name: 'workplace'
                     },
                     {
                         data: 'foto',
@@ -360,19 +442,59 @@
             });
 
             // Create form submit
-            $('#createForm').on('submit', function(e) {
-                e.preventDefault();
-                var id = $('#userId').val();
-                $.ajax({
-                    url: '/karyawan-baru/create',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        $('#createModal').modal('hide');
-                        table.ajax.reload();
-                    }
+            // $('#createForm').on('submit', function(e) {
+            //     e.preventDefault();
+            //     var id = $('#userId').val();
+            //     $.ajax({
+            //         url: '/karyawan-baru/create',
+            //         type: 'POST',
+            //         data: $(this).serialize(),
+            //         success: function(response) {
+            //             table.ajax.reload();
+            //         }
+            //     });
+            // });
+
+            $(document).ready(function() {
+                $('#karyawanForm').on('submit', function(event) {
+                    event.preventDefault(); // Mencegah form dari submit biasa  
+
+                    var formData = {
+                        nik: $('#nik').val(),
+                        nama: $('#nama').val(),
+                        level: $('#level').val(),
+                        workplace: $('#workplace').val(),
+                        tempat_lahir: $('#tempat_lahir').val(),
+                        tgl_lahir: $('#tgl_lahir').val(),
+                        tgl_masuk: $('#tgl_masuk').val(),
+                        _token: '{{ csrf_token() }}'
+                    };
+
+                    $.ajax({
+                        url: '{{ route('karyawan-baru.store') }}',
+                        type: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            // Handle success  
+                            alert('Karyawan created successfully!');
+                            // Anda bisa mereset form atau melakukan redirect  
+                            $('#karyawanForm')[0].reset();
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle error  
+                            var errors = xhr.responseJSON.errors;
+                            if (errors) {
+                                $.each(errors, function(key, value) {
+                                    alert(value[0]);
+                                });
+                            } else {
+                                alert('An error occurred. Please try again.');
+                            }
+                        }
+                    });
                 });
             });
+
 
             // Edit button click
             $('#users-table').on('click', '.edit', function() {
@@ -493,6 +615,4 @@
             });
         });
     </script>
-    {{-- CaptureJS --}}
-    <script></script>
 @endpush

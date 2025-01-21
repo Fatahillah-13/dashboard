@@ -13,10 +13,18 @@ return new class extends Migration
     {
         Schema::create('karyawan_barus', function (Blueprint $table) {
             $table->id();
+            $table->nik();
             $table->string('nama');
-            $table->string('level');
-            $table->string('departemen');
+            $table->unsignedBigInteger('level');
+            $table->unsignedBigInteger('workplace');
+            $table->string('tempat_lahir');
+            $table->timestamps('tgl_lahir');
+            $table->timestamps('tgl_masuk');
             $table->timestamps();
+
+            // Foreign key constraints  
+            $table->foreign('level')->references('id')->on('posisi')->onDelete('cascade');  
+            $table->foreign('workplace')->references('id')->on('departemen')->onDelete('cascade');  
         });
     }
 
