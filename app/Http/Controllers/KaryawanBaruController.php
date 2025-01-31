@@ -14,7 +14,9 @@ class KaryawanBaruController extends Controller
 {
     public function index()
     {
-        return view('list_new_member');
+        $posisis = Posisi::all();
+        $departemens = Departemen::all();
+        return view('list_new_member')->with('posisis', $posisis)->with('departemens', $departemens);;
     }
 
     public function getUsers()
@@ -35,8 +37,8 @@ class KaryawanBaruController extends Controller
             ->addColumn('level', function ($karyawan) {
                 return $karyawan->posisi ? $karyawan->posisi->level : 'Tidak ada posisi';
             })
-            ->addColumn('workplace', function ($karyawan) {  
-                return $karyawan->departemen ? $karyawan->departemen->workplace : 'Tidak ada departemen';  
+            ->addColumn('workplace', function ($karyawan) {
+                return $karyawan->departemen ? $karyawan->departemen->workplace : 'Tidak ada departemen';
             })
             ->addColumn('created_at', function ($gambar) {
                 return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
@@ -61,7 +63,7 @@ class KaryawanBaruController extends Controller
 
     public function show($id)
     {
-        return KaryawanBaru::findOrFail($id);
+        return KaryawanBaru::with('gambarKaryawan', 'posisi', 'departemen')->findOrFail($id);
         return response()->json($karyawan);
     }
 
@@ -76,7 +78,7 @@ class KaryawanBaruController extends Controller
             'tgl_lahir' => 'required|date',
             'tgl_masuk' => 'required|date',
         ]);
-        $karyawans = KaryawanBaru::find($id);
+        $karyawans = KaryawanBaru::findOrFail($id);
         $karyawans->update($request->all());
     }
 

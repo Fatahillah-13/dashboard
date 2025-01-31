@@ -13,87 +13,169 @@
     <div class="container p-4">
         <div class="row">
             {{-- Form Input --}}
-            <div class="col md-6">
-                <form id="karyawanForm" method="POST" action="{{ route('karyawan-baru.store') }}">
-                    @csrf
-                    <div class="row">
-                        <div class="col md-6">
-                            <input type="number" class="form-control" id="id" name="id" hidden>
-                            <div class="mb-3">
-                                <label for="nik" class="form-label">NIK</label>
-                                <input type="text" class="form-control" id="nik" name="nik">
+            <div class="col-md-6 p-3">
+                <div class="card">
+                    <form id="karyawanForm"
+                        action="{{ isset($karyawan) ? route('api.users.update', $karyawan->id) : route('karyawan-baru.store') }}"
+                        method="POST">
+                        @csrf
+                        @if (isset($karyawan))
+                            @method('PUT')
+                        @endif
+                        <h3 class="text-center">Tambah Calon Karyawan</h3>
+                        <div class="row">
+                            <div class="col md-6">
+                                <input type="number" class="form-control" id="userId" name="userId" hidden>
+                                <div class="mb-3">
+                                    <label for="nik" class="form-label">NIK</label>
+                                    <input type="text" class="form-control" id="nik" name="nik"
+                                        placeholder="optional">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="posisi">Level</label>
+                                    <x-posisi-dropdown />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="workplace">Departemen</label>
+                                    <x-departemen-dropdown />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                                    <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir"
+                                        required>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="posisi">Level</label>
-                                <x-posisi-dropdown />
+                            <div class="col md-6 mx-3">
+                                <div class="mb-3">
+                                    <label for="nama" class="form-label">Nama</label>
+                                    <input type="text" class="form-control" id="nama" name="nama" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
+                                    <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tgl_masuk" class="form-label">Tanggal Masuk</label>
+                                    <input type="date" class="form-control" id="tgl_masuk" name="tgl_masuk" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="no_foto" class="form-label">No Foto</label>
+                                    <input type="number" class="form-control" id="	no_foto" name="	no_foto" required>
+                                </div>
+
                             </div>
-                            <div class="mb-3">
-                                <label for="workplace">Departemen</label>
-                                <x-departemen-dropdown />
+                            <div class="col-12 mx-3">
+                                <div id="my_camera" class="d-flex justify-content-center">
+                                    <img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture" srcset=""
+                                        style="width: 150px" height="150px">
+                                </div>
+                                <div id="result" class="d-flex justify-content-center">
+                                    <img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture" srcset=""
+                                        style="width: 150px" height="150px">
+                                </div>
+                                <div class="col md-4 d-flex justify-content-center">
+                                    <button id="toggleWebcamBtn" class="btn btn-primary">Nyalakan Kamera</button>
+                                </div>
+                                <div class="col md-4 d-flex justify-content-center">
+                                    <button id="captureBtn" class="btn btn-success">Ambil Gambar</button>
+                                </div>
+                                <div class="col md-4 d-flex justify-content-center">
+                                    <button id="saveBtn" class="btn btn-info">Simpan Foto</button>
+                                </div>
+
+
                             </div>
-                            <div class="mb-3">
-                                <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
-                                <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir" required>
+                            <div class="col-12 mx-3">
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="col md-6 mx-3">
-                            <div class="mb-3">
-                                <label for="nama" class="form-label">Nama</label>
-                                <input type="text" class="form-control" id="nama" name="nama" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
-                                <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="tgl_masuk" class="form-label">Tanggal Masuk</label>
-                                <input type="date" class="form-control" id="tgl_masuk" name="tgl_masuk" required>
-                            </div>
-                            <div class="mb-3">
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-            {{-- WebcamCapture --}}
-            <div class="col md-6">
-                <div class="row justify-content-center mb-3">
-                    <div class="col md-6">
-                        <div id="my_camera" class="d-flex justify-content-center">
-                            <img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture" srcset=""
-                                style="width: 150px" height="150px">
+            <div class="col-md-6 p-3">
+                <div class="card">
+                    <h3 class="text-center">Update Calon Karyawan</h3>
+                    <form id="karyawanForm"
+                        action="{{ isset($karyawan) ? route('api.users.update', $karyawan->id) : route('karyawan-baru.store') }}"
+                        method="POST">
+                        @csrf
+                        @if (isset($karyawan))
+                            @method('PUT')
+                        @endif
+                        <div class="row">
+                            <div class="col md-6">
+                                <input type="number" class="form-control" id="userId" name="userId" hidden>
+                                <div class="mb-3">
+                                    <label for="nik" class="form-label">Cari</label>
+                                    <select class="form-control js-example-basic-single" name="nik" id="nik">
+                                        <?php
+                                        $karyawan_barus = App\Models\KaryawanBaru::all();
+                                        ?>
+                                        @foreach ($karyawan_barus as $kar)
+                                            <option value="{{ $kar->id }}">{{ $kar->tgl_masuk }} | {{ $kar->nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="posisi">Level</label>
+                                    <x-posisi-dropdown />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="workplace">Departemen</label>
+                                    <x-departemen-dropdown />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                                    <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col md-6 mx-3">
+                                <div class="mb-3">
+                                    <label for="nama" class="form-label">Nama</label>
+                                    <input type="text" class="form-control" id="nama" name="nama" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
+                                    <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tgl_masuk" class="form-label">Tanggal Masuk</label>
+                                    <input type="date" class="form-control" id="tgl_masuk" name="tgl_masuk" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="no_foto" class="form-label">No Foto</label>
+                                    <input type="number" class="form-control" id="	no_foto" name="	no_foto" required>
+                                </div>
+
+                            </div>
+
+                            <div class="col-12 ml-3">
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-success">Update</button>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
-                    <div class="col md-6">
-                        <div id="result" class="d-flex justify-content-center">
-                            <img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture" srcset=""
-                                style="width: 150px" height="150px">
-                        </div>
-                    </div>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col md-4 d-flex justify-content-center">
-                        <button id="toggleWebcamBtn" class="btn btn-primary">Nyalakan Kamera</button>
-                    </div>
-                    <div class="col md-4 d-flex justify-content-center">
-                        <button id="captureBtn" class="btn btn-success">Ambil Gambar</button>
-                    </div>
-                    <div class="col md-4 d-flex justify-content-center">
-                        <button id="saveBtn" class="btn btn-info">Simpan Foto</button>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
+    </div>
+    </div>
 
     {{-- Buttons --}}
-    <div class="row pb-3">
+    {{-- <div class="row pb-3">
         <button type="button" class="btn btn-primary mx-2" data-toggle="modal" data-target="#createModal">+ Tambah
             Karyawan</button>
         <button type="button" class="btn btn-success mx-2" data-toggle="modal" data-target="#nikModal">Generate NIK
             Karyawan</button>
-    </div>
+    </div> --}}
 
     {{-- Table --}}
     <table id="users-table" class="table table-bordered">
@@ -148,7 +230,7 @@
     </div>
 
     {{-- Modal Edit --}}
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+    {{-- <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -174,24 +256,15 @@
                             <label for="departemen">Departemen</label>
                             <input type="text" class="form-control" id="departemen" name="departemen">
                         </div>
-                        {{-- <div class="form-group">
-                            <label for="foto">Foto</label>
-                            <div id="my_camera"></div>
-                            <button id="toggleWebcamBtn" class="btn btn-primary">Nyalakan Kamera</button>
-                            <button id="captureBtn" class="btn btn-success mt-1" style="display: none;">Capture</button>
-                            <button id="retakeBtn" class="btn btn-warning mt-1" style="display: none;">Retake</button>
-                            <button id="saveBtn" class="btn btn-primary mt-1" style="display: none;">Simpan</button>
-                            <div id="result" style="margin-top: 10px;"></div>
-                        </div> --}}
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Modal Foto --}}
-    <div class="modal fade" id="fotoModal" tabindex="-1" role="dialog" aria-labelledby="fotoModalLabel"
+    {{-- <div class="modal fade" id="fotoModal" tabindex="-1" role="dialog" aria-labelledby="fotoModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -233,7 +306,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Modal Show Foto --}}
     <div class="modal fade" id="fotoShowModal" tabindex="-1" role="dialog" aria-labelledby="fotoShowModalLabel"
@@ -255,7 +328,7 @@
     </div>
 
     {{-- Modal Generate NIK --}}
-    <div class="modal fade" id="nikModal" tabindex="-1" role="dialog" aria-labelledby="nikModalLabel"
+    {{-- <div class="modal fade" id="nikModal" tabindex="-1" role="dialog" aria-labelledby="nikModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -310,7 +383,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 @stop
 
@@ -441,7 +514,7 @@
                 fotoModal.show();
             });
 
-            // Create form submit
+            //Create form submit
             // $('#createForm').on('submit', function(e) {
             //     e.preventDefault();
             //     var id = $('#userId').val();
@@ -458,7 +531,7 @@
             $(document).ready(function() {
                 $('#karyawanForm').on('submit', function(event) {
                     event.preventDefault(); // Mencegah form dari submit biasa  
-
+                    var id = $('#userId').val();
                     var formData = {
                         nik: $('#nik').val(),
                         nama: $('#nama').val(),
@@ -469,29 +542,97 @@
                         tgl_masuk: $('#tgl_masuk').val(),
                         _token: '{{ csrf_token() }}'
                     };
+                    no_foto: $('#no_foto').val(),
+                    console.log(formData);
 
-                    $.ajax({
-                        url: '{{ route('karyawan-baru.store') }}',
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            // Handle success  
-                            alert('Karyawan created successfully!');
-                            // Anda bisa mereset form atau melakukan redirect  
-                            $('#karyawanForm')[0].reset();
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle error  
-                            var errors = xhr.responseJSON.errors;
-                            if (errors) {
-                                $.each(errors, function(key, value) {
-                                    alert(value[0]);
-                                });
-                            } else {
-                                alert('An error occurred. Please try again.');
+                    // Ambil dataUri (jika ada)
+                    var dataUri = $('#result img').attr('src'); // Ambil gambar dari elemen #result
+
+                    // Kirim data ke server
+                    if (dataUri && formData.no_foto) {
+                        // Jika dataUri dan no_foto terisi, kirim ke dua tabel
+                        $.ajax({
+                            url: '{{ route('karyawan-baru.store') }}',
+                            type: 'POST',
+                            data: formData,
+                            success: function(response) {
+                                // Jika data karyawan berhasil disimpan, simpan foto
+                                if (response.success) {
+                                    var karyawan_id = response
+                                        .id; // Ambil ID karyawan yang baru dibuat
+                                    $.ajax({
+                                        url: '{{ route('api.karyawan.foto.store') }}', // Route untuk menyimpan foto
+                                        type: 'POST',
+                                        data: {
+                                            karyawan_id: id,
+                                            no_foto: formData.no_foto,
+                                            image: dataUri,
+                                            _token: '{{ csrf_token() }}'
+                                        },
+                                        success: function(response) {
+                                            alert(
+                                                'Data karyawan dan foto berhasil disimpan!'
+                                                );
+                                            $('#karyawanForm')[0]
+                                                .reset(); // Reset form
+                                            $('#result').html(
+                                                ''
+                                                ); // Kosongkan hasil gambar
+                                            table.ajax
+                                                .reload(); // Reload tabel jika menggunakan DataTables
+                                        },
+                                        error: function(xhr, status, error) {
+                                            alert('Gagal menyimpan foto: ' +
+                                                error);
+                                        }
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                alert('Gagal menyimpan data karyawan: ' + error);
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        // Jika dataUri atau no_foto tidak terisi, hanya kirim data karyawan
+                        $.ajax({
+                            url: '{{ route('karyawan-baru.store') }}',
+                            type: 'POST',
+                            data: formData,
+                            success: function(response) {
+                                alert('Data karyawan berhasil disimpan!');
+                                $('#karyawanForm')[0].reset(); // Reset form
+                                table.ajax
+                                    .reload(); // Reload tabel jika menggunakan DataTables
+                            },
+                            error: function(xhr, status, error) {
+                                alert('Gagal menyimpan data karyawan: ' + error);
+                            }
+                        });
+                    }
+
+                    // $.ajax({
+                    //     url: '{{ route('karyawan-baru.store') }}',
+                    //     type: 'POST',
+                    //     data: formData,
+                    //     success: function(response) {
+                    //         // Handle success  
+                    //         alert('Karyawan created successfully!');
+                    //         // Anda bisa mereset form atau melakukan redirect  
+                    //         $('#karyawanForm')[0].reset();
+                    //     },
+                    //     error: function(xhr, status, error) {
+                    //         // Handle error  
+                    //         var errors = xhr.responseJSON.errors;
+                    //         if (errors) {
+                    //             $.each(errors, function(key, value) {
+                    //                 alert(value[0]);
+                    //             });
+                    //         } else {
+                    //             alert('An error occurred. Please try again.');
+                    //         }
+                    //     }
+                    // });
+
                 });
             });
 
@@ -501,15 +642,19 @@
                 var id = $(this).data('id');
                 $.get('/api/karyawan/' + id, function(data) {
                     $('#userId').val(data.id);
+                    $('#nik').val(data.nik);
                     $('#nama').val(data.nama);
                     $('#level').val(data.level);
-                    $('#departemen').val(data.departemen);
-                    $('#editModal').modal('show');
+                    $('#workplace').val(data.workplace);
+                    $('#tempat_lahir').val(data.tempat_lahir);
+                    $('#tgl_lahir').val(data.tgl_lahir);
+                    $('#tgl_masuk').val(data.tgl_masuk);
+                    // $('#editModal').modal('show');
                 });
             });
 
             // Update form submit
-            $('#editForm').on('submit', function(e) {
+            $('#karyawanForm').on('submit', function(e) {
                 e.preventDefault();
                 var id = $('#userId').val();
                 $.ajax({
@@ -517,7 +662,7 @@
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
-                        $('#editModal').modal('hide');
+                        // $('#editModal').modal('hide');
                         table.ajax.reload();
                     }
                 });
