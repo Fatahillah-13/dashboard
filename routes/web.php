@@ -40,6 +40,11 @@ Route::get('/photo', function () {
     return view('list_photo');
 });
 
+// Route to list ambil foto page
+Route::get('/candidate', function () {
+    return view('candidatelist');
+});
+
 // Route to Karyawan page (CRUD karyawan)
 Route::get('/karyawan', [KaryawanBaruController::class, 'index']);
 Route::get('/api/karyawan/{id}', [KaryawanBaruController::class, 'show']);

@@ -9,14 +9,20 @@ use App\Models\Posisi;
 use App\Models\Departemen;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class KaryawanBaruController extends Controller
 {
+    // public function index()
+    // {
+    //     $posisis = Posisi::all();
+    //     $departemens = Departemen::all();
+    //     return view('list_new_member')->with('posisis', $posisis)->with('departemens', $departemens);;
+    // }
     public function index()
     {
-        $posisis = Posisi::all();
-        $departemens = Departemen::all();
-        return view('list_new_member')->with('posisis', $posisis)->with('departemens', $departemens);;
+        $karyawans = KaryawanBaru::with(['gambarkaryawan', 'posisi', 'departemen'])->get(); // Mengambil data karyawan beserta gambarnya, level, dan departemen
+        return view('candidatelist', compact('karyawans'));
     }
 
     public function getUsers()
@@ -100,7 +106,12 @@ class KaryawanBaruController extends Controller
             'tgl_masuk' => '',
         ]);
 
-        KaryawanBaru::create($validatedData);
+        $karyawan = KaryawanBaru::create($validatedData);
+
+        // Tangani upload gambar jika ada
+        if ($request->has('foto')) {
+            $this->storeFoto($request, $karyawan->id); // Pass the karyawan ID to storeFoto
+        }
     }
 
     public function getPhotoList()
@@ -131,28 +142,70 @@ class KaryawanBaruController extends Controller
             ->rawColumns(['action'])
             ->make(true); // Menggunakan DataTables
     }
-    public function storeFoto(Request $request)
+    // public function storeFoto(Request $request, $karyawanId)
+    // {
+    //     $image = $request->input('image'); // Ambil data gambar dari request
+    //     $image = str_replace('data:image/jpeg;base64,', '', $image);
+    //     $image = str_replace(' ', '+', $image);
+    //     $imageName = 'pic_' . time() . '.jpeg';
+
+    //     file_put_contents(public_path('storage/' . $imageName), base64_decode($image));
+
+    //     // Simpan data ke database
+    //     // $capture = new GambarKaryawan();
+    //     // $capture->karyawan_id = $request->input('karyawan_id');
+    //     // $capture->image = $imageName;
+    //     // $capture->save();
+
+    //     GambarKaryawan::create([
+    //         'karyawan_id' => $karyawanId,
+    //         'no_foto' => $request->input('no_foto'),
+    //         'foto' => $request->$imageName,
+    //     ]);
+
+    //     return response()->json(['message' => 'Image saved successfully']);
+    // }
+
+    public function storeFoto(Request $request, $karyawanId)
     {
-        $image = $request->input('image'); // Ambil data gambar dari request
-        $image = str_replace('data:image/jpeg;base64,', '', $image);
-        $image = str_replace(' ', '+', $image);
-        $imageName = 'pic_' . time() . '.jpeg';
-
-        file_put_contents(public_path('storage/' . $imageName), base64_decode($image));
-
-        // Simpan data ke database
-        // $capture = new GambarKaryawan();
-        // $capture->karyawan_id = $request->input('karyawan_id');
-        // $capture->image = $imageName;
-        // $capture->save();
-
-        GambarKaryawan::create([
-            'karyawan_id' => $request->input('karyawan_id'),
-            'no_foto' => $request->input('no_foto'),
-            'foto' => $imageName,
+        // Validasi file yang diupload
+        $request->validate([
+            'foto' => 'required|string', // Pastikan foto adalah string (data URI)
         ]);
 
-        return response()->json(['message' => 'Image saved successfully']);
+        // Mengambil data URI dari input
+        $dataUri = $request->input('foto');
+
+        // Memisahkan metadata dari data URI
+        if (preg_match('/^data:image\/(\w+);base64,/', $dataUri, $type)) {
+            $dataUri = substr($dataUri, strpos($dataUri, ',') + 1);
+            $type = strtolower($type[1]); // Mengambil tipe gambar (jpeg, png, dll)
+
+            // Decode base64
+            $data = base64_decode($dataUri);
+
+            if ($data === false) {
+                return response()->json(['message' => 'Gagal mendekode gambar.'], 400);
+            }
+
+            // Membuat nama file yang unik
+            $filename = 'pic_' . time() . '.' . $type; // Menggunakan timestamp sebagai nama file
+            $filePath = public_path('storage/' . $filename); // Path untuk menyimpan file
+
+            // Menyimpan gambar ke public/storage
+            if (file_put_contents($filePath, $data) === false) {
+                return response()->json(['message' => 'Gagal menyimpan gambar.'], 500);
+            }
+
+            // Simpan nama file ke database
+            GambarKaryawan::create([
+                'karyawan_id' => $karyawanId, // ID karyawan yang diupload
+                'no_foto' => $request->input('no_foto'), // Ambil nomor foto dari input
+                'foto' => $filename, // Simpan path file relatif
+            ]);
+        } else {
+            return response()->json(['message' => 'Format gambar tidak valid.'], 400);
+        }
     }
 
     public function getKaryawanByDate(Request $request)

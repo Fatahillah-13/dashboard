@@ -334,6 +334,11 @@ return [
             'icon' => 'fas fa fa-users',
         ],
         [
+            'text' => 'List Kandidat',
+            'url' => '/candidate',
+            'icon' => 'fas fa fa-users',
+        ],
+        [
             'text' => 'profile',
             'url' => 'admin/profile',
             'icon' => 'fas fa-fw fa-user',

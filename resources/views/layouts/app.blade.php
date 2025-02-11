@@ -14,14 +14,19 @@
 @section('content_header')
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
-
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
+    <link href="https://adminlte.io/themes/v3/plugins/toastr/toastr.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+        integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <style>
+        .hidden{
+            display: none;
+        }
         .dataTables_wrapper {
             width: 100%;
         }
@@ -55,6 +60,10 @@
         .dataTables_scrollHead table,
         .dataTables_scrollBody table {
             width: 100% !important;
+        }
+
+        .select2-selection--single {
+            min-height: 38px;
         }
     </style>
     @hasSection('content_header_title')
@@ -108,12 +117,12 @@
     <style type="text/css">
         {{-- You can add AdminLTE customizations here --}}
         /*
-                                    .card-header {
-                                        border-bottom: none;
-                                    }
-                                    .card-title {
-                                        font-weight: 600;
-                                    }
-                                    */
+                                                .card-header {
+                                                    border-bottom: none;
+                                                }
+                                                .card-title {
+                                                    font-weight: 600;
+                                                }
+                                                */
     </style>
 @endpush
