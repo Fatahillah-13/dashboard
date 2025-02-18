@@ -45,12 +45,18 @@ Route::get('/candidate', function () {
     return view('candidatelist');
 });
 
+Route::get('/new-employee', function () {
+    return view('new_employee_list');
+});
+
 // Route to Karyawan page (CRUD karyawan)
-Route::get('/karyawan', [KaryawanBaruController::class, 'index']);
+// Route::get('/karyawan', [KaryawanBaruController::class, 'index']);
 Route::get('/api/karyawan/{id}', [KaryawanBaruController::class, 'show']);
 Route::get('/api/karyawan', [KaryawanBaruController::class, 'getUsers'])->name('api.users');
 Route::post('/api/karyawan/store', [KaryawanBaruController::class, 'store'])->name('karyawan-baru.store');
 Route::post('/api/karyawan/update/{id}', [KaryawanBaruController::class, 'update'])->name('api.users.update');
+Route::get('/autocomplete', [KaryawanBaruController::class, 'autocomplete'])->name('autocomplete');
+Route::get('/autocomplete2', [KaryawanBaruController::class, 'autocomplete2'])->name('autocomplete2');
 Route::delete('/api/karyawan/delete/{id}', [KaryawanBaruController::class, 'destroy'])->name('api.users.delete');
 
 // Route to Add Photo
@@ -59,4 +65,6 @@ Route::post('/api/karyawan/foto', [KaryawanBaruController::class, 'storeFoto'])-
 // Route to list photo page
 Route::get('/api/photo', [KaryawanBaruController::class, 'getPhotoList'])->name('api.photo');
 
-Route::get('/karyawan/byDate', [KaryawanBaruController::class, 'getKaryawanByDate'])->name('api.karyawan.byDate');
+Route::get('/karyawan/filter', [KaryawanBaruController::class, 'datefilter'])->name('karyawan.filter');
+
+Route::post('/karyawan/changenik', [KaryawanBaruController::class, 'updatenik'])->name('karyawan.changenik');

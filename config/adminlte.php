@@ -329,8 +329,8 @@ return [
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'List Calon Karyawan',
-            'url' => '/karyawan',
+            'text' => 'List Karyawan Baru',
+            'url' => '/new-employee',
             'icon' => 'fas fa fa-users',
         ],
         [

@@ -22,7 +22,7 @@ class KaryawanBaruController extends Controller
     public function index()
     {
         $karyawans = KaryawanBaru::with(['gambarkaryawan', 'posisi', 'departemen'])->get(); // Mengambil data karyawan beserta gambarnya, level, dan departemen
-        return view('candidatelist', compact('karyawans'));
+        return $karyawans;
     }
 
     public function getUsers()
@@ -75,17 +75,61 @@ class KaryawanBaruController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nik' => 'required|string|max:255',
-            'nama' => 'required|string|max:255',
-            'level' => 'required|exists:posisi,id',
-            'workplace' => 'required|exists:departemen,id',
-            'tempat_lahir' => 'required|string|max:255',
-            'tgl_lahir' => 'required|date',
-            'tgl_masuk' => 'required|date',
-        ]);
-        $karyawans = KaryawanBaru::findOrFail($id);
-        $karyawans->update($request->all());
+        $data = [
+            'id' => $id,
+            'nik' => $request->nik,
+            'nama' => $request->nama,
+            'level' => $request->level,
+            'workplace' => $request->workplace,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tgl_lahir' => $request->tgl_lahir,
+            'tgl_masuk' => $request->tgl_masuk,
+        ];
+        DB::table('karyawan_barus')
+            ->where('id', $id)
+            ->update($data);
+        // Mengambil data URI dari input
+        if ($request->has('foto') && $request->has('no_foto')) {
+            $dataUri = $request->input('foto');
+            // Memisahkan metadata dari data URI
+            if (preg_match('/^data:image\/(\w+);base64,/', $dataUri, $type)) {
+                $dataUri = substr($dataUri, strpos($dataUri, ',') + 1);
+                $type = strtolower($type[1]); // Mengambil tipe gambar (jpeg, png, dll)                
+                // Decode base64
+                $data = base64_decode($dataUri, true);
+                if ($data === false) {
+                    return response()->json(['message' => 'Gagal mendekode gambar.'], 400);
+                } else {
+                    // Membuat nama file yang unik
+                    $filename = 'pic_' . time() . '.' . $type; // Menggunakan timestamp sebagai nama file
+                    $filePath = public_path('storage/' . $filename); // Path untuk menyimpan file
+                    // Menyimpan gambar ke public/storage
+                    if (file_put_contents($filePath, $data) === false) {
+                        return response()->json(['message' => 'Gagal menyimpan gambar.'], 500);
+                    }
+                    $get_foto = DB::table('gambar_karyawan')->where('karyawan_id', '=', $request->id);
+                    if ($get_foto->count() > 0) {
+                        DB::table('gambar_karyawan')
+                            ->where('karyawan_id', $id)
+                            ->update([
+                                'no_foto' => $request->input('no_foto'), // Ambil nomor foto dari input
+                                'foto' => $filename, // Simpan path file relatif
+                            ]);
+                    } else {
+                        GambarKaryawan::create([
+                            'karyawan_id' => $id, // ID karyawan yang diupload
+                            'no_foto' => $request->input('no_foto'), // Ambil nomor foto dari input
+                            'foto' => $filename, // Simpan path file relatif
+                        ]);
+                    }
+                }
+                $karyawan_barus = DB::table('karyawan_barus')->get();
+                return response()->json($karyawan_barus);
+            } else {
+                $karyawan_barus = DB::table('karyawan_barus')->get();
+                return response()->json($karyawan_barus);
+            }
+        }
     }
 
     public function destroy($id)
@@ -142,35 +186,12 @@ class KaryawanBaruController extends Controller
             ->rawColumns(['action'])
             ->make(true); // Menggunakan DataTables
     }
-    // public function storeFoto(Request $request, $karyawanId)
-    // {
-    //     $image = $request->input('image'); // Ambil data gambar dari request
-    //     $image = str_replace('data:image/jpeg;base64,', '', $image);
-    //     $image = str_replace(' ', '+', $image);
-    //     $imageName = 'pic_' . time() . '.jpeg';
-
-    //     file_put_contents(public_path('storage/' . $imageName), base64_decode($image));
-
-    //     // Simpan data ke database
-    //     // $capture = new GambarKaryawan();
-    //     // $capture->karyawan_id = $request->input('karyawan_id');
-    //     // $capture->image = $imageName;
-    //     // $capture->save();
-
-    //     GambarKaryawan::create([
-    //         'karyawan_id' => $karyawanId,
-    //         'no_foto' => $request->input('no_foto'),
-    //         'foto' => $request->$imageName,
-    //     ]);
-
-    //     return response()->json(['message' => 'Image saved successfully']);
-    // }
 
     public function storeFoto(Request $request, $karyawanId)
     {
         // Validasi file yang diupload
         $request->validate([
-            'foto' => 'required|string', // Pastikan foto adalah string (data URI)
+            'foto' => 'nullable|string', // Pastikan foto adalah string (data URI)
         ]);
 
         // Mengambil data URI dari input
@@ -208,35 +229,128 @@ class KaryawanBaruController extends Controller
         }
     }
 
-    public function getKaryawanByDate(Request $request)
+    public function updateNoFoto($request, $id)
+    {
+        // return $request;
+        // return response()->json(['message' => 'Format gambar  valid.']);
+        // Validasi file yang diupload
+        // $request->validate([
+        //     'no_foto' => '',
+        // ]);
+        // $gambar = GambarKaryawan::findOrFail($id);
+        // $gambar->update($request);
+        // $gambar->update($data->all());
+        DB::table('karyawan_barus')
+            ->where('id', $id)
+            ->update($request);
+    }
+
+    public function updateFoto($request, $karyawanId)
+    {
+        // Validasi file yang diupload
+        // $request->validate([
+        //     'foto' => 'nullable|string', // Pastikan foto adalah string (data URI)
+        // ]);
+        // Mengambil data URI dari input
+        $dataUri = $request->input('foto');
+        // Memisahkan metadata dari data URI
+        if (preg_match('/^data:image\/(\w+);base64,/', $dataUri, $type)) {
+            $dataUri = substr($dataUri, strpos($dataUri, ',') + 1);
+            $type = strtolower($type[1]); // Mengambil tipe gambar (jpeg, png, dll)
+
+            // Decode base64
+            $data = base64_decode($dataUri);
+
+            if ($data === false) {
+                return response()->json(['message' => 'Gagal mendekode gambar.'], 401);
+            }
+
+            // Membuat nama file yang unik
+            $filename = 'pic_' . time() . '.' . $type; // Menggunakan timestamp sebagai nama file
+            Log::info('Generated filename: ' . $filename); // Debugging the filename variable
+            $filePath = public_path('storage/' . $filename); // Path untuk menyimpan file
+
+            // Menyimpan gambar ke public/storage
+            if (file_put_contents($filePath, $data) === false) {
+                return response()->json(['message' => 'Gagal menyimpan gambar.'], 501);
+            }
+
+            // Update nama file di database
+            $gambar = GambarKaryawan::where('karyawan_id', $karyawanId)->first();
+            if ($gambar) {
+                $gambar->update([
+                    'foto' => $filename // Update path file relatif
+                ]);
+            } else {
+                GambarKaryawan::create([
+                    'karyawan_id' => $karyawanId, // ID karyawan yang diupload
+                    'no_foto' => $request->input('no_foto'), // Ambil nomor foto dari input
+                    'foto' => $filename, // Simpan path file relatif
+                ]);
+            }
+        } else {
+            return response()->json(['message' => 'Format gambar tidak valid.'], 400);
+        }
+    }
+
+    public function autocomplete(Request $request)
     {
         $request->validate([
-            'date_nik' => 'required|date',
+            'nama' => 'required|string',
+            'tgl_lahir' => 'required|date',
         ]);
+        // Ambil data berdasarkan nama dan tanggal lahir
+        $data = KaryawanBaru::with(['gambarkaryawan', 'posisi', 'departemen'])->where('nama', 'LIKE', '%' . $request->nama . '%')
+            ->where('tgl_lahir', $request->tgl_lahir)
+            ->get();
+        return response()->json($data);
+    }
 
-        // Mengambil data dari tabel karyawan dengan eager loading gambar_karyawan  
-        $karyawans = GambarKaryawan::with('karyawan')
-            ->whereDate('updated_at', $request->date_nik)
-            ->get('gambar_karyawan.*');
+    public function autocomplete2(Request $request)
+    {
+        // Ambil data berdasarkan nama dan tanggal lahir
+        $calon_karyawan = DB::table('karyawan_barus')->find($request->id);
+        $get_foto = DB::table('gambar_karyawan')->where('karyawan_id', '=', $request->id);
+        $foto = [
+            'no_foto' => NULL,
+            'foto' => NULL,
+        ];
+        if ($get_foto->count() > 0) {
+            $foto = [
+                'no_foto' => $get_foto->first()->no_foto,
+                'foto' => $get_foto->first()->foto,
+            ];
+        }
+        $data = [$calon_karyawan, $foto];
+        return response()->json($data);
+    }
 
-        return datatables()::of($karyawans)
-            ->addColumn('no', function ($gambar) {
-                return $gambar->karyawan ? $gambar->karyawan->id : 'Tidak Diketahui'; // Menampilkan nama karyawan  
-            })
-            ->addColumn('nama', function ($gambar) {
-                return $gambar->karyawan ? $gambar->karyawan->nama : 'Tidak Diketahui'; // Menampilkan nama karyawan  
-            })
-            ->addColumn('level', function ($gambar) {
-                return $gambar->karyawan ? $gambar->karyawan->level : 'Tidak Diketahui'; // Menampilkan nama karyawan  
-            })
-            ->addColumn('departemen', function ($gambar) {
-                return $gambar->karyawan ? $gambar->karyawan->departemen : 'Tidak Diketahui'; // Menampilkan nama karyawan  
-            })
-            ->addColumn('created_at', function ($gambar) {
-                return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
-            })
+    public function datefilter(Request $request)
+    {
+        $date = $request->input('date');
+        $karyawans = KaryawanBaru::with(['gambarkaryawan', 'posisi', 'departemen'])->whereDate('tgl_masuk', $date)->whereHas('gambarKaryawan')->get();
 
-            ->rawColumns(['foto']) // Pastikan 'foto' di sini    
-            ->make(true);
+        return response()->json(['data' => $karyawans]);
+    }
+
+    function updatenik(Request $request)
+    {
+        $tglmasuk = $request->input('tglmasuk');
+        $prefix = $request->input('prefix');
+        $newnik = $request->input('newnik');
+
+        $karyawans = KaryawanBaru::where('tgl_masuk', $tglmasuk)->get();
+
+        foreach ($karyawans as $karyawan) {
+            $existingKaryawan = KaryawanBaru::where('nik', $prefix . $newnik)->first();
+            if ($existingKaryawan) {
+                return response()->json(['message' => 'NIK already exists for another employee.'], 400);
+            }
+            $karyawan->nik = $prefix . $newnik;
+            $karyawan->save();
+            $newnik++; // Increment the NIK number for the next employee
+        }
+
+        return response()->json(['message' => 'NIKs updated successfully.']);
     }
 }
