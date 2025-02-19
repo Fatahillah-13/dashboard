@@ -329,14 +329,19 @@ return [
             'icon' => 'fas fa-fw fa-user',
         ],
         [
+            'text' => 'List Kandidat',
+            'url' => '/candidate',
+            'icon' => 'fas fa fa-users',
+        ],
+        [
             'text' => 'List Karyawan Baru',
             'url' => '/new-employee',
             'icon' => 'fas fa fa-users',
         ],
         [
-            'text' => 'List Kandidat',
-            'url' => '/candidate',
-            'icon' => 'fas fa fa-users',
+            'text' => 'Cetak ID Card',
+            'url' => '/print',
+            'icon' => 'fas fa fa-camera',
         ],
         [
             'text' => 'profile',

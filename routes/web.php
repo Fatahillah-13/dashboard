@@ -49,6 +49,10 @@ Route::get('/new-employee', function () {
     return view('new_employee_list');
 });
 
+Route::get('/print', function () {
+    return view('print_idcard');
+});
+
 // Route to Karyawan page (CRUD karyawan)
 // Route::get('/karyawan', [KaryawanBaruController::class, 'index']);
 Route::get('/api/karyawan/{id}', [KaryawanBaruController::class, 'show']);
@@ -57,6 +61,7 @@ Route::post('/api/karyawan/store', [KaryawanBaruController::class, 'store'])->na
 Route::post('/api/karyawan/update/{id}', [KaryawanBaruController::class, 'update'])->name('api.users.update');
 Route::get('/autocomplete', [KaryawanBaruController::class, 'autocomplete'])->name('autocomplete');
 Route::get('/autocomplete2', [KaryawanBaruController::class, 'autocomplete2'])->name('autocomplete2');
+Route::get('/autocomplete3', [KaryawanBaruController::class, 'autocomplete3'])->name('autocomplete3');
 Route::delete('/api/karyawan/delete/{id}', [KaryawanBaruController::class, 'destroy'])->name('api.users.delete');
 
 // Route to Add Photo

@@ -1,0 +1,54 @@
+.template-id-card-staff-up-1 {
+    position: absolute;
+    top: 161px;
+    left: 18px;
+    width: 627px;
+    height: 1005px;
+    object-fit: cover;
+}
+.photo-icon {
+    position: absolute;
+    top: 373px;
+    left: 190px;
+    width: 277px;
+    height: 355px;
+    object-fit: cover;
+}
+.fullname {
+    font-weight: bold;
+    position: absolute;
+    top: 764px;
+    left: 130px;
+    letter-spacing: 3px;
+}
+.department {
+    position: absolute;
+    top: 834px;
+    left: 300px;
+    letter-spacing: 1px;
+}
+.joblevel {
+    position: absolute;
+    top: 903px;
+    left: 294px;
+    font-size: 32px;
+    letter-spacing: 1px;
+}
+.nikid {
+    position: absolute;
+    top: 959px;
+    left: 236px;
+    font-size: 38px;
+    letter-spacing: 1px;
+}
+.template-id-card-staff-up-1-parent {
+    width: 100%;
+    position: relative;
+    background-color: #eee;
+    height: 1328px;
+    overflow: hidden;
+    text-align: left;
+    font-size: 40px;
+    color: #000;
+    font-family: Roboto;
+}
