@@ -309,8 +309,8 @@ class KaryawanBaruController extends Controller
     public function autocomplete2(Request $request)
     {
         // Ambil data berdasarkan nama dan tanggal lahir
-        $calon_karyawan = DB::table('karyawan_barus')->find($request->id);
-        $get_foto = DB::table('gambar_karyawan')->where('karyawan_id', '=', $request->id);
+        $calon_karyawan = KaryawanBaru::with('posisi', 'departemen')->find($request->id);
+        $get_foto = GambarKaryawan::where('karyawan_id', '=', $request->id);
         $foto = [
             'no_foto' => NULL,
             'foto' => NULL,

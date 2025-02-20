@@ -139,9 +139,7 @@
                                         class="select-department form-control nama_edit2" onchange="GetDataKaryawan();"
                                         required>
                                         @php
-                                            $karyawans_belum = App\Models\KaryawanBaru::whereDoesntHave(
-                                                'gambarKaryawan',
-                                            )->get();
+                                            $karyawans_belum = App\Models\KaryawanBaru::all();
                                         @endphp
                                         @foreach ($karyawans_belum as $karyawan)
                                             <option value="{{ $karyawan->id }}">Nama : {{ $karyawan->nama }} | Tempat Lahir
@@ -310,7 +308,7 @@
                     </thead>
                     <tbody>
                         <?php
-                        $karyawans = App\Models\KaryawanBaru::whereDoesntHave('gambarKaryawan')->get();
+                        $karyawans = App\Models\KaryawanBaru::all();
                         ?>
                         @foreach ($karyawans as $index => $karyawan)
                             <tr>
