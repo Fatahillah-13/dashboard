@@ -73,11 +73,27 @@
                                                         '<img src="{{ asset('assets/img/pict_template.jpg') }}" alt="picture" width="150" height="150">'
                                                     );
                                                 }
-
                                                 $('#nikid').text(data[0].nik); // Fill the department div
                                                 $('#fullname').text(data[0].nama.toUpperCase()); // Fill the department div
-                                                $('#joblevel').text(data[0].posisi.level.toUpperCase()); // Fill the department div
-                                                $('#department').text(data[0].departemen.job_department.toUpperCase()); // Fill the department div
+                                                $('#joblevel').text(data[0].posisi.level
+                                                    .toUpperCase()); // Fill the department div
+                                                $('#department').text(data[0].departemen.job_department
+                                                    .toUpperCase()); // Fill the department div
+                                                // console.log(data[0].level + ' ' + typeof(data[0].level));
+                                                // Cek Masih Belum Bisa
+                                                if (data[0].level === 1) {
+                                                    // console.log('operator');
+                                                    $('#bg-template').html(
+                                                        '<img class="template-id-card-staff-up-2" src="{{ asset('assets/img/Template ID Card Operator Hitam.png') }}' +
+                                                        '" alt="">'
+                                                    );
+                                                } else {
+                                                    // console.log('Staff Up');
+                                                    $('#bg-template').html(
+                                                        '<img class="template-id-card-staff-up-2" src="{{ asset('assets/img/template_idcard_staffup.png') }}' +
+                                                        '" alt="">'
+                                                    );
+                                                }
                                             },
                                             error: function(xhr, status, error) {
                                                 console.error('Gagal mengambil data:', error);
@@ -87,7 +103,7 @@
                                 </script>
                             </div>
                         </div>
-                        <div class="print-card">
+                        {{-- <div class="print-card">
                             <div class="photo-parent">
                                 <div class="preview" id="preview">
                                     <img class="photo-icon" alt="" src="{{ asset('assets/img/foto_icon.jpg') }}">
@@ -99,10 +115,33 @@
                                     <div class="nikid" id="nikid">NIK</div>
                                 </div>
                             </div>
-                            <img class="template-id-card-staff-up-2" alt=""
-                                src="{{ asset('assets/img/Template ID Card Staff Up 2.png') }}">
-                            <img class="template-id-card-staff-up-1" alt=""
-                                src="{{ asset('assets/img/Template ID Card Staff Up 1.png') }}">
+                            <div class="print_footer" id="print_footer">
+                                <img class="template-id-card-staff-up-2" alt=""
+                                    src="{{ asset('assets/img/Template ID Card Staff Up 2.png') }}">
+                            </div>
+                            <div class="print_header">
+                                <img class="template-id-card-staff-up-1" alt=""
+                                    src="{{ asset('assets/img/Template ID Card Staff Up 1.png') }}">
+                            </div>
+                        </div> --}}
+                        {{-- change form --}}
+                        <div class="it-parent" id="it-parent">
+                            <div class="bg-template" id="bg-template">
+                                <img class="it-icon" alt=""
+                                    src="{{ asset('assets/img/template_idcard_staffup.png') }}">
+                            </div>
+                            <div class="photo-parent">
+                                <div class="preview" id="preview">
+                                    <img class="photo-icon" alt=""
+                                        src="{{ asset('assets/img/picture_icon.png') }}">
+                                </div>
+                                <div class="fullname-parent">
+                                    <b class="fullname" id="fullname">FULLNAME</b>
+                                    <div class="department" id="department">DEPARTMENT</div>
+                                    <div class="joblevel" id="joblevel">LEVEL</div>
+                                    <div class="nikid" id="nikid">NIK ID</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -146,11 +185,13 @@
                             </div>
                             <div class="form-group">
                                 <label for="nik" class="form-label">Nama Cetak</label>
-                                <input type="text" class="form-control" id="nama_show" name="nama_show" readonly>
+                                <input type="text" class="form-control" id="nama_show" name="nama_show"
+                                    onchange="changeName()">
                             </div>
                             <div class="form-group">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="ctpat_check">
+                                    <input type="checkbox" class="form-check-input" id="ctpat_check"
+                                        onclick="selectCTPAT()">
                                     <label class="form-check-label" for="exampleCheck1">CTPAT</label>
                                 </div>
                             </div>
@@ -182,13 +223,40 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <button type="button" id="printButton" class="btn btn-block bg-gradient-success">Cetak ID
+                                <button type="button" id="printButton" class="btn btn-block bg-gradient-success">Cetak
+                                    ID
                                     Card</button>
                             </div>
                         </div>
                         <!-- /.card-body -->
                     </div>
                 </div>
+                <script>
+                    function changeName() {
+                        var name = document.getElementById('nama_show').value;
+                        $('#fullname').text(name.toUpperCase()); // Fill the department div
+                        if (name.split(' ').length > 2) {
+                            $('#fullname').css('font-size', '36px');
+                        } else {
+                            $('#fullname').css('font-size', '');
+                        }
+                    }
+
+                    function selectCTPAT() {
+                        var ctpat = document.getElementById('ctpat_check').value;
+                        if (ctpat === 'on') {
+                            console.log('check on');
+                            $('#bg-template').html(
+                                '<img class="it-icon" src="{{ asset('assets/img/sea_hrd.png') }}' +
+                                '" alt="">'
+                            );
+                        } else {
+                            console.log('check off');
+
+                        }
+
+                    }
+                </script>
             </div>
         </div>
     </form>
@@ -226,18 +294,15 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('printButton').addEventListener('click', function() {
-                // Show the print div
-                var printDiv = document.getElementById('print');
-                printDiv.style.display = 'block';
-
-                // Print the div
-                window.print();
-
-                // Hide the print div again after printing
-                printDiv.style.display = 'none';
-            });
+        document.getElementById('printButton').addEventListener('click', function() {
+            var printContents = document.getElementById('it-parent').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML =
+                '<html><head><title>Print ID Card</title><style>@media print { body { -webkit-print-color-adjust: exact; } .it-parent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; } .bg-template img { width: 100%; height: auto; } .photo-parent { display: flex; flex-direction: column; align-items: center; } .photo-icon { width: 150px; height: 150px; } .fullname-parent { text-align: center; } .fullname { font-size: 24px; font-weight: bold; } .department, .joblevel, .nikid { font-size: 18px; } }</style></head><body>' +
+                printContents + '</body></html>';
+            window.print();
+            // document.body.innerHTML = originalContents;
+            // location.reload();
         });
     </script>
 @endpush

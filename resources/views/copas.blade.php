@@ -1,3 +1,77 @@
+<html>
+
+<head>
+    <title>Print ID Card</title>
+    <style>
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+
+            .it-parent {
+                width: 627px;
+                position: relative;
+                background-color: #fff;
+                height: 1005px;
+                overflow: hidden;
+                text-align: center;
+                font-size: 40px;
+                color: #000;
+                font-family: Roboto;
+            }
+
+            .photo-parent {
+                position: absolute;
+                top: 212px;
+                left: calc(50% - 215.5px);
+                width: 431px;
+                height: 631px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 36px;
+            }
+
+            .photo-icon {
+                width: 277px;
+                position: relative;
+                height: 355px;
+                object-fit: cover;
+            }
+
+            .fullname-parent {
+                align-self: stretch;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 21px;
+            }
+
+            .fullname {
+                align-self: stretch;
+                position: relative;
+                letter-spacing: 3px;
+                display: inline-block;
+                height: 47px;
+                flex-shrink: 0;
+            }
+
+            .department,
+            .joblevel,
+            .nikid {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>' +
+    printContents + '</body>
+
+</html>
+
 <script>
     data_uri = "";
     // Configure the webcam

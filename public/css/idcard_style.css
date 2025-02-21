@@ -1,4 +1,4 @@
-.photo-icon {
+/* .photo-icon {
     width: 280px;
     position: relative;
     height: 320px;
@@ -76,16 +76,77 @@
     font-size: 40px;
     color: #000;
     font-family: Roboto;
+    border-radius: 12px;
 }
+*/
 
-@media print {
-    body {
-        visibility: hidden;
-    }
-    #print {
-        visibility: visible;
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
+.it-icon {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 627px;
+    height: 1005px;
+    object-fit: cover;
+}
+.photo-icon {
+    width: 277px;
+    position: relative;
+    height: 355px;
+    object-fit: cover;
+}
+.fullname {
+    align-self: stretch;
+    position: relative;
+    letter-spacing: 3px;
+    display: inline-block;
+    height: 47px;
+    flex-shrink: 0;
+}
+.department {
+    align-self: stretch;
+    position: relative;
+    letter-spacing: 1px;
+}
+.joblevel {
+    align-self: stretch;
+    position: relative;
+    font-size: 32px;
+    letter-spacing: 1px;
+}
+.nikid {
+    align-self: stretch;
+    position: relative;
+    font-size: 38px;
+    letter-spacing: 1px;
+}
+.fullname-parent {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 21px;
+}
+.photo-parent {
+    position: absolute;
+    top: 212px;
+    left: calc(50% - 215.5px);
+    width: 431px;
+    height: 631px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 36px;
+}
+.it-parent {
+    width: 627px;
+    position: relative;
+    background-color: #fff;
+    height: 1005px;
+    overflow: hidden;
+    text-align: center;
+    font-size: 40px;
+    color: #000;
+    font-family: Roboto;
 }
