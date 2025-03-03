@@ -53,6 +53,10 @@ Route::get('/print', function () {
     return view('print_idcard');
 });
 
+Route::get('/printexample', function () {
+    return view('print_frame');
+});
+
 // Route to Karyawan page (CRUD karyawan)
 // Route::get('/karyawan', [KaryawanBaruController::class, 'index']);
 Route::get('/api/karyawan/{id}', [KaryawanBaruController::class, 'show']);
@@ -73,3 +77,4 @@ Route::get('/api/photo', [KaryawanBaruController::class, 'getPhotoList'])->name(
 Route::get('/karyawan/filter', [KaryawanBaruController::class, 'datefilter'])->name('karyawan.filter');
 
 Route::post('/karyawan/changenik', [KaryawanBaruController::class, 'updatenik'])->name('karyawan.changenik');
+Route::get('/getkaryawan/{id}', [KaryawanBaruController::class, 'getKaryawan'])->name('karyawan.getkaryawan');

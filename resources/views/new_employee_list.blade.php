@@ -13,6 +13,8 @@
     <div class="col-12" style="padding: 16px">
         <button type="button" class="btn btn-danger">Hapus Data</button>
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#nikModal">Generate NIK</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#printIdCardModal">Cetak ID
+            Card</button>
     </div>
     {{-- /.Buttons --}}
     {{-- Table --}}
@@ -167,6 +169,83 @@
         </div>
     </div>
     {{-- /.Modal Generate NIK --}}
+    {{-- Modal Print ID Card --}}
+    <div class="modal fade" id="printIdCardModal" tabindex="-1" role="dialog" aria-labelledby="printIdCardModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nikModalLabel">Cetak ID Card</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="nikForm">
+                        @csrf
+                        <input type="hidden">
+                        <div class="row">
+                            <div class="col-md-8 form-group">
+                                <label for="startworkdate">Tanggal Masuk</label>
+                                <input type="date" class="form-control" id="startworkdate" name="startworkdate"
+                                    required>
+                            </div>
+                            <div class="col-md-4 col align-self-end form-group">
+                                <button class="btn btn-primary" id="showEmployeeFilterbtn">Tampilkan</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <table id="employeePrintTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectPrintAll"></th>
+                                        <th>No</th>
+                                        <th>NIK</th>
+                                        <th>Nama</th>
+                                        <th>Level</th>
+                                        <th>Departemen</th>
+                                        <th>No Foto</th>
+                                        <th>Foto</th>
+                                        <th>Tgl Foto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{-- Data Goes Here --}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                    <div id="idCardTemplate" style="display: none;">
+                        <div class="print" id="print">
+                            <div class="it-parent" id="it-parent">
+                                <div class="bg-template" id="bg-template">
+                                    <img class="it-icon" alt=""
+                                        src="{{ asset('assets/img/template_idcard_staffup.png') }}">
+                                </div>
+                                <div class="photo-parent">
+                                    <div class="preview" id="preview">
+                                        <img class="photo-icon" alt=""
+                                            src="{{ asset('assets/img/picture_icon.png') }}">
+                                    </div>
+                                    <div class="fullname-parent">
+                                        <b class="fullname" id="fullname">FULLNAME</b>
+                                        <div class="department" id="department">DEPARTMENT</div>
+                                        <div class="joblevel" id="joblevel">LEVEL</div>
+                                        <div class="nikid" id="nikid">NIK ID</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="printIdCardsButton">Print ID Card</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- /.Modal Generate NIK --}}
 @stop
 
 {{-- Push extra CSS --}}
@@ -174,6 +253,8 @@
 @push('css')
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+    <link rel="stylesheet" href="{{ asset('css/new_employee_list_style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/idcard_style.css') }}">
 @endpush
 
 {{-- Push extra scripts --}}
@@ -193,6 +274,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.datatables.net/select/3.0.0/js/dataTables.select.js"></script>
     <script src="https://cdn.datatables.net/select/3.0.0/js/select.dataTables.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <script>
         $(function() {
             $("#employeetable").DataTable({
@@ -598,6 +680,141 @@
                         toastr.error(errorMessage);
                     }
                 });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#showEmployeeFilterbtn').on('click', function(e) {
+                e.preventDefault(); // Mencegah form submit
+
+                // Ambil nilai tanggal dari input
+                var date = $('#startworkdate').val();
+
+                // Lakukan permintaan AJAX
+                $.ajax({
+                    url: '/karyawan/filter', // Ganti dengan URL endpoint Anda
+                    method: 'GET',
+                    data: {
+                        date: date
+                    },
+                    success: function(response) {
+                        // Kosongkan tabel sebelum menambahkan data baru
+                        $('#employeePrintTable tbody').empty();
+
+                        // Tambahkan data ke tabel
+                        response.data.forEach(function(karyawan, index) {
+                            $('#employeePrintTable tbody').append(`
+                                <tr>
+                                    <td><input type="checkbox" class="rowPrintCheckbox" name="checkbox" id="rowPrintCheckbox"></td>
+                                    <td>${index + 1}</td>
+                                    <td>${karyawan.nik || '-'}</td>
+                                    <td>${karyawan.nama}</td>
+                                    <td>${karyawan.posisi.level || 'N/A'}</td>
+                                    <td>${karyawan.departemen.job_department || 'N/A'}</td>
+                                    <td>${karyawan.gambarkaryawan.no_foto || 'N/A'}</td>
+                                    <td>
+                                        ${karyawan.gambarkaryawan && karyawan.gambarkaryawan.foto ? 
+                                            `<img src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
+                                            'Belum foto'}
+                                    </td>
+                                    <td>${karyawan.gambarkaryawan ? formatDate(karyawan.gambarkaryawan.created_at) : 'Belum Foto'}</td>
+                                </tr>
+                            `);
+                        });
+                    },
+                    error: function(xhr) {
+                        console.error(xhr);
+                        alert('Terjadi kesalahan saat mengambil data.');
+                    }
+                });
+            });
+
+            $('#printIdCardsButton').on('click', function() {
+                const {
+                    jsPDF
+                } = window.jspdf;
+
+                // Create a new PDF document with custom size (width: 55 mm, height: 85 mm)
+                const pdf = new jsPDF('p', 'mm', [55, 85]);
+
+                // Get all employee data from the table
+                const employees = [];
+                $('#employeePrintTable tbody tr').each(function() {
+                    const row = $(this);
+                    const checkbox = row.find('.rowPrintCheckbox');
+                    if (checkbox.is(':checked')) {
+                        const nik = row.find('td:nth-child(2)').text();
+                        const name = row.find('td:nth-child(3)').text();
+                        const position = row.find('td:nth-child(4)').text();
+                        const department = row.find('td:nth-child(5)').text();
+                        const photoSrc = row.find('img').attr('src');
+
+                        employees.push({
+                            nik,
+                            name,
+                            position,
+                            department,
+                            photoSrc
+                        });
+                    }
+                });
+
+                console.log(employees);
+
+
+                // Create ID cards for each employee
+                const promises = employees.map((employee, index) => {
+                    // Clone the ID card template
+                    const idCard = $('#idCardTemplate').clone().removeAttr('id').css('display',
+                        'block');
+                    idCard.find('.nikid').text(employee.nik);
+                    idCard.find('.fullname').text(employee.name);
+                    idCard.find('.joblevel').text(employee.position);
+                    idCard.find('.department').text(employee.department);
+                    idCard.find('.photo-icon').attr('src', employee.photoSrc || '');
+
+                    // Ensure the ID card is in the DOM
+                    $('body').append(idCard);
+
+                    // Use html2canvas to capture the ID card
+                    return html2canvas(idCard[0]).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+
+                        // Add the image to the PDF at position (0, 0)
+                        pdf.addImage(imgData, 'PNG', 0, 0, 55,
+                            85); // Custom size for ID card
+
+                        idCard.remove(); // Clean up the DOM after capturing
+
+                        // Add a new page if there are more employees
+                        if (index < employees.length - 1) {
+                            pdf.addPage(); // Add a new page for the next ID card
+                        }
+                    });
+                });
+
+                // After all ID cards are generated, save the PDF
+                Promise.all(promises).then(() => {
+                    pdf.save('employee_id_cards.pdf');
+                });
+            });
+            // Fungsi untuk memilih semua checkbox
+            $('#selectPrintAll').on('click', function() {
+                var checked = this.checked;
+                $('.rowPrintCheckbox').each(function() {
+                    this.checked = checked;
+                });
+            });
+
+            // Fungsi untuk mengatur checkbox "select all" berdasarkan checkbox individu
+            $('#employeePrintTable tbody').on('change', '.rowPrintCheckbox', function() {
+                if (!this.checked) {
+                    $('#selectPrintAll').prop('checked', false);
+                }
+                if ($('.rowPrintCheckbox:checked').length === $('.rowPrintCheckbox').length) {
+                    $('#selectPrintAll').prop('checked', true);
+                }
             });
         });
     </script>

@@ -23,10 +23,16 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.cdnfonts.com/css/futura-std-4" rel="stylesheet">
+
     <style>
-        .hidden{
+        .hidden {
             display: none;
         }
+
         .dataTables_wrapper {
             width: 100%;
         }
@@ -117,12 +123,12 @@
     <style type="text/css">
         {{-- You can add AdminLTE customizations here --}}
         /*
-                                                .card-header {
-                                                    border-bottom: none;
-                                                }
-                                                .card-title {
-                                                    font-weight: 600;
-                                                }
-                                                */
+                                                        .card-header {
+                                                            border-bottom: none;
+                                                        }
+                                                        .card-title {
+                                                            font-weight: 600;
+                                                        }
+                                                        */
     </style>
 @endpush

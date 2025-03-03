@@ -353,4 +353,25 @@ class KaryawanBaruController extends Controller
 
         return response()->json(['message' => 'NIKs updated successfully.']);
     }
+
+    public function getKaryawan($id)
+    {
+        // Fetch the employee data based on the ID
+        $karyawan = KaryawanBaru::with('gambarkaryawan', 'posisi', 'departemen')->find($id);
+
+        if ($karyawan) {
+            return response()->json([
+                'data' => [
+                    'id' => $karyawan->id,
+                    'nik' => $karyawan->nik,
+                    'nama' => $karyawan->nama,
+                    'gambarkaryawan' => $karyawan->gambarkaryawan,
+                    'posisi' => $karyawan->posisi,
+                    'departemen' => $karyawan->departemen,
+                ]
+            ]);
+        }
+
+        return response()->json(['error' => 'Karyawan tidak ditemukan.'], 404);
+    }
 }

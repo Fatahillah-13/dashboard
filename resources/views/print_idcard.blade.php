@@ -84,13 +84,13 @@
                                                 if (data[0].level === 1) {
                                                     // console.log('operator');
                                                     $('#bg-template').html(
-                                                        '<img class="template-id-card-staff-up-2" src="{{ asset('assets/img/Template ID Card Operator Hitam.png') }}' +
+                                                        '<img class="photo-icon" src="{{ asset('assets/img/Template ID Card Operator Hitam.png') }}' +
                                                         '" alt="">'
                                                     );
                                                 } else {
                                                     // console.log('Staff Up');
                                                     $('#bg-template').html(
-                                                        '<img class="template-id-card-staff-up-2" src="{{ asset('assets/img/template_idcard_staffup.png') }}' +
+                                                        '<img class="photo-icon" src="{{ asset('assets/img/template_idcard_staffup.png') }}' +
                                                         '" alt="">'
                                                     );
                                                 }
@@ -125,21 +125,23 @@
                             </div>
                         </div> --}}
                         {{-- change form --}}
-                        <div class="it-parent" id="it-parent">
-                            <div class="bg-template" id="bg-template">
-                                <img class="it-icon" alt=""
-                                    src="{{ asset('assets/img/template_idcard_staffup.png') }}">
-                            </div>
-                            <div class="photo-parent">
-                                <div class="preview" id="preview">
-                                    <img class="photo-icon" alt=""
-                                        src="{{ asset('assets/img/picture_icon.png') }}">
+                        <div class="print" id="print">
+                            <div class="it-parent" id="it-parent">
+                                <div class="bg-template" id="bg-template">
+                                    <img class="it-icon" alt=""
+                                        src="{{ asset('assets/img/template_idcard_staffup.png') }}">
                                 </div>
-                                <div class="fullname-parent">
-                                    <b class="fullname" id="fullname">FULLNAME</b>
-                                    <div class="department" id="department">DEPARTMENT</div>
-                                    <div class="joblevel" id="joblevel">LEVEL</div>
-                                    <div class="nikid" id="nikid">NIK ID</div>
+                                <div class="photo-parent">
+                                    <div class="preview" id="preview">
+                                        <img class="photo-icon" alt=""
+                                            src="{{ asset('assets/img/picture_icon.png') }}">
+                                    </div>
+                                    <div class="fullname-parent">
+                                        <b class="fullname" id="fullname">FULLNAME</b>
+                                        <div class="department" id="department">DEPARTMENT</div>
+                                        <div class="joblevel" id="joblevel">LEVEL</div>
+                                        <div class="nikid" id="nikid">NIK ID</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -227,6 +229,7 @@
                                     ID
                                     Card</button>
                             </div>
+                            <a href="/printexample">contoh print</a>
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -284,6 +287,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
         integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.select-level').select2();
@@ -294,15 +298,35 @@
         });
     </script>
     <script>
-        document.getElementById('printButton').addEventListener('click', function() {
-            var printContents = document.getElementById('it-parent').innerHTML;
-            var originalContents = document.body.innerHTML;
-            document.body.innerHTML =
-                '<html><head><title>Print ID Card</title><style>@media print { body { -webkit-print-color-adjust: exact; } .it-parent { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; } .bg-template img { width: 100%; height: auto; } .photo-parent { display: flex; flex-direction: column; align-items: center; } .photo-icon { width: 150px; height: 150px; } .fullname-parent { text-align: center; } .fullname { font-size: 24px; font-weight: bold; } .department, .joblevel, .nikid { font-size: 18px; } }</style></head><body>' +
-                printContents + '</body></html>';
-            window.print();
-            // document.body.innerHTML = originalContents;
-            // location.reload();
+        // document.getElementById('printButton').addEventListener('click', function() {
+        //     var printContents = document.getElementById('print').innerHTML;
+        //     var originalContents = document.body.innerHTML;
+        //     document.body.innerHTML = printContents;
+        //     window.print();
+        //     document.body.innerHTML = originalContents;
+        //     location.reload();
+        // });
+    </script>
+    <script>
+        const container = document.getElementById('print');
+        const printButton = document.getElementById('printButton');
+        const name = document.getElementById('nama_show');
+        const nik = document.getElementById('nik_show');
+        const {
+            jsPDF
+        } = window.jspdf;
+
+        printButton.addEventListener("click", async () => {
+            // Use html2canvas to capture the container
+            html2canvas(container).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', [53, 85]);
+                // Set the dimensions for the PDF
+                const pdfWidth = 53; // 5.3 cm
+                const pdfHeight = 85; // 8.5 cm
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`${name.value}_${nik.value}.pdf`);
+            });
         });
     </script>
 @endpush
