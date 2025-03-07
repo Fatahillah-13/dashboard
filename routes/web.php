@@ -7,10 +7,10 @@ use App\Models\KaryawanBaru;
 
 Route::get('/', function () {
     return view('home');
-});
+})->middleware('auth');
 
 // Route to Login and Register page
-Auth::routes();
+// Auth::routes();
 
 // Route to profile page
 Route::get('/admin/profile', function () {

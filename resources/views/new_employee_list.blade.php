@@ -198,7 +198,7 @@
                             <table id="employeePrintTable" class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th><input type="checkbox" id="selectPrintAll"></th>
+                                        <th><input type="checkbox" id="selectPrintAll" class="selectPrintAll"></th>
                                         <th>No</th>
                                         <th>NIK</th>
                                         <th>Nama</th>
@@ -206,7 +206,7 @@
                                         <th>Departemen</th>
                                         <th>No Foto</th>
                                         <th>Foto</th>
-                                        <th>Tgl Foto</th>
+                                        <th>CTPAT</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -219,8 +219,8 @@
                         <div class="print" id="print">
                             <div class="it-parent" id="it-parent">
                                 <div class="bg-template" id="bg-template">
-                                    <img class="it-icon" alt=""
-                                        src="{{ asset('assets/img/template_idcard_staffup.png') }}">
+                                    <img class="it-icon" src="{{ asset('assets/img/template_idcard_staffup.png') }}"
+                                        alt="">
                                 </div>
                                 <div class="photo-parent">
                                     <div class="preview" id="preview">
@@ -706,7 +706,7 @@
                         response.data.forEach(function(karyawan, index) {
                             $('#employeePrintTable tbody').append(`
                                 <tr>
-                                    <td><input type="checkbox" class="rowPrintCheckbox" name="checkbox" id="rowPrintCheckbox"></td>
+                                    <td><input type="checkbox" class="rowPrintCheckbox" name="checkbox" id="rowPrintCheckbox${index}" checked></td>
                                     <td>${index + 1}</td>
                                     <td>${karyawan.nik || '-'}</td>
                                     <td>${karyawan.nama}</td>
@@ -718,10 +718,12 @@
                                             `<img src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
                                             'Belum foto'}
                                     </td>
-                                    <td>${karyawan.gambarkaryawan ? formatDate(karyawan.gambarkaryawan.created_at) : 'Belum Foto'}</td>
+                                    <td><input type="checkbox" class="rowCtpatCheckbox" name="checkbox" id="rowCtpatCheckbox${index}"></td>
                                 </tr>
                             `);
                         });
+                        $('#selectPrintAll').prop('checked', true);
+
                     },
                     error: function(xhr) {
                         console.error(xhr);
@@ -730,7 +732,7 @@
                 });
             });
 
-            $('#printIdCardsButton').on('click', function() {
+            $('#printIdCardsButton').on('click', async function() {
                 const {
                     jsPDF
                 } = window.jspdf;
@@ -743,62 +745,34 @@
                 $('#employeePrintTable tbody tr').each(function() {
                     const row = $(this);
                     const checkbox = row.find('.rowPrintCheckbox');
+                    const ctpatcheckbox = row.find('.rowCtpatCheckbox').is(':checked');
                     if (checkbox.is(':checked')) {
-                        const nik = row.find('td:nth-child(2)').text();
-                        const name = row.find('td:nth-child(3)').text();
-                        const position = row.find('td:nth-child(4)').text();
-                        const department = row.find('td:nth-child(5)').text();
+                        const nik = row.find('td:nth-child(3)').text();
+                        const name = row.find('td:nth-child(4)').text();
+                        const position = row.find('td:nth-child(5)').text();
+                        const department = row.find('td:nth-child(6)').text();
                         const photoSrc = row.find('img').attr('src');
-
+                        const ctpat = ctpatcheckbox;
                         employees.push({
-                            nik,
+                            photoSrc,
                             name,
-                            position,
                             department,
-                            photoSrc
+                            position,
+                            nik,
+                            ctpat,
                         });
                     }
                 });
 
                 console.log(employees);
 
-
                 // Create ID cards for each employee
-                const promises = employees.map((employee, index) => {
-                    // Clone the ID card template
-                    const idCard = $('#idCardTemplate').clone().removeAttr('id').css('display',
-                        'block');
-                    idCard.find('.nikid').text(employee.nik);
-                    idCard.find('.fullname').text(employee.name);
-                    idCard.find('.joblevel').text(employee.position);
-                    idCard.find('.department').text(employee.department);
-                    idCard.find('.photo-icon').attr('src', employee.photoSrc || '');
-
-                    // Ensure the ID card is in the DOM
-                    $('body').append(idCard);
-
-                    // Use html2canvas to capture the ID card
-                    return html2canvas(idCard[0]).then(canvas => {
-                        const imgData = canvas.toDataURL('image/png');
-
-                        // Add the image to the PDF at position (0, 0)
-                        pdf.addImage(imgData, 'PNG', 0, 0, 55,
-                            85); // Custom size for ID card
-
-                        idCard.remove(); // Clean up the DOM after capturing
-
-                        // Add a new page if there are more employees
-                        if (index < employees.length - 1) {
-                            pdf.addPage(); // Add a new page for the next ID card
-                        }
-                    });
-                });
+                await generateIDCards(employees, pdf);
 
                 // After all ID cards are generated, save the PDF
-                Promise.all(promises).then(() => {
-                    pdf.save('employee_id_cards.pdf');
-                });
+                pdf.save('employee_id_cards.pdf');
             });
+
             // Fungsi untuk memilih semua checkbox
             $('#selectPrintAll').on('click', function() {
                 var checked = this.checked;
@@ -817,5 +791,82 @@
                 }
             });
         });
+
+        async function generateIDCards(employees, pdf) {
+            for (const [index, employee] of employees.entries()) {
+                // Clone the ID card template
+                const idCard = $('#idCardTemplate').clone().removeAttr('id').css('display', 'block');
+                idCard.find('.photo-icon').attr('src', employee.photoSrc || '');
+                idCard.find('.fullname').text(employee.name);
+                idCard.find('.department').text(employee.department);
+                idCard.find('.joblevel').text(employee.position);
+                idCard.find('.nikid').text(employee.nik);
+
+                // Set the background template based on the CTPAT
+                await setBackgroundTemplate(employee, idCard);
+
+                // Ensure the ID card is in the DOM
+                $('body').append(idCard);
+
+                try {
+                    await captureAndAddToPDF(idCard, employee, index, employees.length, pdf);
+                } catch (error) {
+                    console.error(`Error processing ID card for ${employee.name}:`, error);
+                } finally {
+                    idCard.remove(); // Clean up the DOM after processing
+                }
+            }
+        }
+
+        async function captureAndAddToPDF(idCard, employee, index, totalEmployees, pdf) {
+            const canvas = await html2canvas(idCard[0]);
+            const imgData = canvas.toDataURL('image/png');
+
+            console.log(`Captured image data for ${employee.name}:`);
+
+            // Add the image to the PDF at position (0, 0)
+            pdf.addImage(imgData, 'PNG', 0, 0, 55, 85); // Custom size for ID card
+
+            // Add a new page if there are more employees
+            if (index < totalEmployees - 1) {
+                pdf.addPage(); // Add a new page for the next ID card
+            }
+        }
+
+        function setBackgroundTemplate(employee, idCard) {
+            return new Promise((resolve) => {
+                const bgTemplate = idCard.find('#bg-template'); // Find bg-template in the cloned idCard
+                bgTemplate.empty(); // Clear previous background
+                // bgTemplate.html('<img class="it-icon" src="{{ asset('assets/ctpat/qip.jpg') }}" alt="">');
+
+                if (!employee.ctpat && employee.position !== 'Operator') {
+                    bgTemplate.html(
+                        '<img class="it-icon" src="{{ asset('assets/img/template_idcard_staffup.png') }}" alt="">'
+                        );
+                } else if (employee.ctpat && employee.department === 'HRD') {
+                    bgTemplate.html('<img class="it-icon" src="{{ asset('assets/ctpat/sea_hrd.jpg') }}" alt="">');
+                } else if (employee.ctpat && employee.department === 'SEA') {
+                    bgTemplate.html('<img class="it-icon" src="{{ asset('assets/ctpat/sea_hrd.jpg') }}" alt="">');
+                } else if (employee.ctpat && employee.department === 'IT') {
+                    bgTemplate.html('<img class="it-icon" src="{{ asset('assets/ctpat/it.jpg') }}" alt="">');
+                } else if (employee.ctpat && employee.department === 'QIP') {
+                    bgTemplate.html('<img class="it-icon" src="{{ asset('assets/ctpat/qip.jpg') }}" alt="">');
+                } else if (employee.ctpat && employee.position === 'Operator') {
+                    bgTemplate.html(
+                        '<img class="it-icon" src="{{ asset('assets/ctpat/production.jpg') }}" alt="">');
+                } else if (!employee.ctpat && employee.position === 'Operator') {
+                    bgTemplate.html(
+                        '<img class="it-icon" src="{{ asset('assets/img/Template ID Card Operator Hitam.png') }}" alt="">'
+                        );
+                } else {
+                    bgTemplate.html(
+                        '<img class="it-icon" src="{{ asset('assets/img/Template ID Card Operator Hitam.png') }}" alt="">'
+                        );
+                }
+
+                // Resolve the promise after the background is set
+                resolve();
+            });
+        }
     </script>
 @endpush
