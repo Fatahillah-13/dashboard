@@ -4,6 +4,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\KaryawanBaruController;
 use App\Models\KaryawanBaru;
+use App\Http\Controllers\AuthController;
+
+// Login
+Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'authenticate'])->name('auth.authenticate');
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::get('/', function () {
     return view('home');
@@ -28,7 +36,7 @@ Route::get('/list-take-photo', function () {
 });
 
 // Route to Home page
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
 
 // Route to Karyawan Baru page
 // Route::get('/karyawan-baru/create', function () {
