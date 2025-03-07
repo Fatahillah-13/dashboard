@@ -704,12 +704,17 @@
 
                         // Tambahkan data ke tabel
                         response.data.forEach(function(karyawan, index) {
+                            // Cek panjang nama karyawan
+                            var namaStyle = karyawan.nama.length > 17 ?
+                                'style="color: red;"' : '';
+                            var editable = karyawan.nama.length > 17 ?
+                                'contenteditable="true"' : '';
                             $('#employeePrintTable tbody').append(`
                                 <tr>
                                     <td><input type="checkbox" class="rowPrintCheckbox" name="checkbox" id="rowPrintCheckbox${index}" checked></td>
                                     <td>${index + 1}</td>
                                     <td>${karyawan.nik || '-'}</td>
-                                    <td>${karyawan.nama}</td>
+                                    <td ${namaStyle} ${editable}>${karyawan.nama}</td>
                                     <td>${karyawan.posisi.level || 'N/A'}</td>
                                     <td>${karyawan.departemen.job_department || 'N/A'}</td>
                                     <td>${karyawan.gambarkaryawan.no_foto || 'N/A'}</td>
@@ -842,7 +847,7 @@
                 if (!employee.ctpat && employee.position !== 'Operator') {
                     bgTemplate.html(
                         '<img class="it-icon" src="{{ asset('assets/img/template_idcard_staffup.png') }}" alt="">'
-                        );
+                    );
                 } else if (employee.ctpat && employee.department === 'HRD') {
                     bgTemplate.html('<img class="it-icon" src="{{ asset('assets/ctpat/sea_hrd.jpg') }}" alt="">');
                 } else if (employee.ctpat && employee.department === 'SEA') {
@@ -857,11 +862,11 @@
                 } else if (!employee.ctpat && employee.position === 'Operator') {
                     bgTemplate.html(
                         '<img class="it-icon" src="{{ asset('assets/img/Template ID Card Operator Hitam.png') }}" alt="">'
-                        );
+                    );
                 } else {
                     bgTemplate.html(
                         '<img class="it-icon" src="{{ asset('assets/img/Template ID Card Operator Hitam.png') }}" alt="">'
-                        );
+                    );
                 }
 
                 // Resolve the promise after the background is set

@@ -66,7 +66,7 @@
                                                     $('#preview').html(
                                                         '<img src="{{ asset('storage/') }}' +
                                                         '/' + data[1].foto +
-                                                        '" alt="Foto" width="280" height="320">'
+                                                        '" alt="Foto" width="410" height="420">'
                                                     );
                                                 } else {
                                                     $('#preview').html(
@@ -246,18 +246,47 @@
                     }
 
                     function selectCTPAT() {
-                        var ctpat = document.getElementById('ctpat_check').value;
-                        if (ctpat === 'on') {
-                            console.log('check on');
+                        var ctpat = document.getElementById('ctpat_check');
+                        var department = document.getElementById('department').innerText;
+                        console.log(department);
+
+                        if (ctpat.checked && department === 'HRD') {
+
                             $('#bg-template').html(
-                                '<img class="it-icon" src="{{ asset('assets/img/sea_hrd.png') }}' +
+                                '<img class="it-icon" src="{{ asset('assets/ctpat/sea_hrd.jpg') }}' +
                                 '" alt="">'
                             );
-                        } else {
-                            console.log('check off');
-
+                        } else if (ctpat.checked && department === 'SEA') {
+                            $('#bg-template').html(
+                                '<img class="it-icon" src="{{ asset('assets/ctpat/sea_hrd.jpg') }}' +
+                                '" alt="">'
+                            );
+                        } else if (ctpat.checked && department === 'IT') {
+                            $('#bg-template').html(
+                                '<img class="it-icon" src="{{ asset('assets/ctpat/it.jpg') }}' +
+                                '" alt="">'
+                            );
+                        } else if (ctpat.checked && department === 'EXIM') {
+                            $('#bg-template').html(
+                                '<img class="it-icon" src="{{ asset('assets/ctpat/exim.jpg') }}' +
+                                '" alt="">'
+                            );
+                        } else if (ctpat.checked && department === 'FINISH GOOD') {
+                            $('#bg-template').html(
+                                '<img class="it-icon" src="{{ asset('assets/ctpat/finishgood.jpg') }}' +
+                                '" alt="">'
+                            );
+                        } else if (ctpat.checked && department === 'QIP') {
+                            $('#bg-template').html(
+                                '<img class="it-icon" src="{{ asset('assets/ctpat/qip.jpg') }}' +
+                                '" alt="">'
+                            );
+                        } else if (ctpat.checked) {
+                            $('#bg-template').html(
+                                '<img class="it-icon" src="{{ asset('assets/ctpat/production.jpg') }}' +
+                                '" alt="">'
+                            );
                         }
-
                     }
                 </script>
             </div>
