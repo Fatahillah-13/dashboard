@@ -215,7 +215,7 @@
                             </table>
                         </div>
                     </form>
-                    <div id="idCardTemplate" style="display: none;">
+                    {{-- <div id="idCardTemplate" style="display: none;">
                         <div class="print" id="print">
                             <div class="it-parent" id="it-parent">
                                 <div class="bg-template" id="bg-template">
@@ -236,7 +236,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -246,6 +246,44 @@
         </div>
     </div>
     {{-- /.Modal Generate NIK --}}
+    {{-- Template Foto --}}
+    <div class="col-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Print ID Card</h3>
+                <div class="card-tools">
+                </div>
+                <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body" style="background-color: #F2F5F7">
+                <div class="col-12">
+                </div>
+                {{-- change form --}}
+                <div class="print" id="print">
+                    <div class="it-parent" id="it-parent">
+                        <div class="bg-template" id="bg-template">
+                            <img class="it-icon" alt=""
+                                src="{{ asset('assets/img/template_idcard_staffup.png') }}">
+                        </div>
+                        <div class="photo-parent">
+                            <div class="preview" id="preview">
+                                <img id="photo" alt="" src="{{ asset('assets/img/picture_icon.png') }}"
+                                    width="630px" height="770px">
+                            </div>
+                            <div class="fullname-parent">
+                                <b class="fullname" id="fullname">FULLNAME</b>
+                                <div class="department" id="department">DEPARTMENT</div>
+                                <div class="joblevel" id="joblevel">LEVEL</div>
+                                <div class="nikid" id="nikid">NIK ID</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- /.Template Foto --}}
 @stop
 
 {{-- Push extra CSS --}}
@@ -254,7 +292,7 @@
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
     <link rel="stylesheet" href="{{ asset('css/new_employee_list_style.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/idcard_style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/idcardAll_style.css') }}">
 @endpush
 
 {{-- Push extra scripts --}}
@@ -706,7 +744,8 @@
                         response.data.forEach(function(karyawan, index) {
                             // Cek panjang nama karyawan
                             var namaStyle = karyawan.nama.length > 17 ?
-                                'style="color: red;"' : '';
+                                'style="color: red; text-transform: uppercase;"' :
+                                'style="text-transform: uppercase;"';
                             var editable = karyawan.nama.length > 17 ?
                                 'contenteditable="true"' : '';
                             $('#employeePrintTable tbody').append(`
@@ -742,8 +781,8 @@
                     jsPDF
                 } = window.jspdf;
 
-                // Create a new PDF document with custom size (width: 55 mm, height: 85 mm)
-                const pdf = new jsPDF('p', 'mm', [55, 85]);
+                // Create a new PDF document with custom size (width: 53 mm, height: 85 mm)
+                const pdf = new jsPDF('p', 'mm', [53, 85]);
 
                 // Get all employee data from the table
                 const employees = [];
@@ -768,8 +807,6 @@
                         });
                     }
                 });
-
-                console.log(employees);
 
                 // Create ID cards for each employee
                 await generateIDCards(employees, pdf);
@@ -800,11 +837,18 @@
         async function generateIDCards(employees, pdf) {
             for (const [index, employee] of employees.entries()) {
                 // Clone the ID card template
-                const idCard = $('#idCardTemplate').clone().removeAttr('id').css('display', 'block');
-                idCard.find('.photo-icon').attr('src', employee.photoSrc || '');
-                idCard.find('.fullname').text(employee.name);
-                idCard.find('.department').text(employee.department);
-                idCard.find('.joblevel').text(employee.position);
+                const idCard = $('#print').clone().removeAttr('id').css('display', 'block');
+                idCard.find('#photo').attr('src', employee.photoSrc || '');
+                idCard.addClass('print');
+                idCard.addClass('it-parent');
+                idCard.addClass('bg-template');
+                idCard.addClass('it-icon');
+                idCard.addClass('photo-parent');
+                idCard.addClass('preview');
+                idCard.addClass('fullname-parent');
+                idCard.find('.fullname').text(employee.name.toUpperCase());
+                idCard.find('.department').text(employee.department.toUpperCase());
+                idCard.find('.joblevel').text(employee.position.toUpperCase());
                 idCard.find('.nikid').text(employee.nik);
 
                 // Set the background template based on the CTPAT
@@ -827,10 +871,8 @@
             const canvas = await html2canvas(idCard[0]);
             const imgData = canvas.toDataURL('image/png');
 
-            console.log(`Captured image data for ${employee.name}:`);
-
             // Add the image to the PDF at position (0, 0)
-            pdf.addImage(imgData, 'PNG', 0, 0, 55, 85); // Custom size for ID card
+            pdf.addImage(imgData, 'PNG', 0, 0, 53, 85); // Custom size for ID card
 
             // Add a new page if there are more employees
             if (index < totalEmployees - 1) {

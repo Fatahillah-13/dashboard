@@ -103,27 +103,6 @@
                                 </script>
                             </div>
                         </div>
-                        {{-- <div class="print-card">
-                            <div class="photo-parent">
-                                <div class="preview" id="preview">
-                                    <img class="photo-icon" alt="" src="{{ asset('assets/img/foto_icon.jpg') }}">
-                                </div>
-                                <div class="fullname-parent">
-                                    <div class="fullname" id="fullname">FULLNAME</div>
-                                    <div class="department" id="department">DEPARTMENT</div>
-                                    <div class="joblevel" id="joblevel">LEVEL</div>
-                                    <div class="nikid" id="nikid">NIK</div>
-                                </div>
-                            </div>
-                            <div class="print_footer" id="print_footer">
-                                <img class="template-id-card-staff-up-2" alt=""
-                                    src="{{ asset('assets/img/Template ID Card Staff Up 2.png') }}">
-                            </div>
-                            <div class="print_header">
-                                <img class="template-id-card-staff-up-1" alt=""
-                                    src="{{ asset('assets/img/Template ID Card Staff Up 1.png') }}">
-                            </div>
-                        </div> --}}
                         {{-- change form --}}
                         <div class="print" id="print">
                             <div class="it-parent" id="it-parent">
