@@ -75,6 +75,7 @@ Route::get('/autocomplete', [KaryawanBaruController::class, 'autocomplete'])->na
 Route::get('/autocomplete2', [KaryawanBaruController::class, 'autocomplete2'])->name('autocomplete2');
 Route::get('/autocomplete3', [KaryawanBaruController::class, 'autocomplete3'])->name('autocomplete3');
 Route::delete('/api/karyawan/delete/{id}', [KaryawanBaruController::class, 'destroy'])->name('api.users.delete');
+Route::post('/delete-selected', [KaryawanBaruController::class, 'deleteSelected'])->name('delete.selected');
 
 // Route to Add Photo
 Route::post('/api/karyawan/foto', [KaryawanBaruController::class, 'storeFoto'])->name('api.karyawan.foto.store');

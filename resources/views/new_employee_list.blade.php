@@ -2,7 +2,7 @@
 
 {{-- Customize layout sections --}}
 @section('plugins.Datatables', true)
-@section('subtitle', 'Welcome')
+@section('subtitle', '')
 @section('content_header_title', 'Home')
 @section('content_header_subtitle', 'Welcome')
 
@@ -10,104 +10,94 @@
 {{-- Content body: main page content --}}
 @section('content_body')
     {{-- Buttons --}}
-    <div class="col-12" style="padding: 16px">
-        <button type="button" class="btn btn-danger">Hapus Data</button>
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#nikModal">Generate NIK</button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#printIdCardModal">Cetak ID
-            Card</button>
-    </div>
+
     {{-- /.Buttons --}}
     {{-- Table --}}
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Tabel Karyawan Baru</h3>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-            <table class="table table-bordered table-striped" id="employeetable">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="selectAll"></th>
-                        <th>No</th>
-                        <th>NIK</th>
-                        <th>No. Foto</th>
-                        <th>Nama</th>
-                        <th>Level</th>
-                        <th>Departemen</th>
-                        <th>Foto</th>
-                        <th>Tgl. Daftar</th>
-                        <th>Tgl. Lahir</th>
-                        <th>Tgl. Masuk</th>
-                        <th>Tgl. Foto</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $karyawans = App\Models\KaryawanBaru::whereHas('gambarKaryawan')->get();
-                    ?>
-                    @foreach ($karyawans as $index => $karyawan)
-                        <tr>
-                            <td></td>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $karyawan->nik ?? '-' }}</td>
-                            <td>{{ $karyawan->gambarKaryawan->no_foto ?? 'N/A' }}</td>
-                            <!-- Menampilkan no_foto jika ada -->
-                            <td>{{ $karyawan->nama }}</td>
-                            <td>{{ $karyawan->posisi->level ?? 'N/A' }}</td> <!-- Menampilkan nama level -->
-                            <td>{{ $karyawan->departemen->job_department ?? 'N/A' }}</td>
-                            <!-- Menampilkan nama departemen -->
-                            <td>
-                                @if ($karyawan->gambarKaryawan && $karyawan->gambarKaryawan->foto)
-                                    <!-- Cek apakah gambarKaryawan ada dan path-nya ada -->
-                                    <img src="{{ asset('storage/' . $karyawan->gambarKaryawan->foto) }}" alt="Foto"
-                                        width="100">
-                                @else
-                                    Belum foto
-                                @endif
-                            </td>
-                            <td>{{ $karyawan->created_at }}</td>
-                            <td>{{ $karyawan->tgl_lahir }}</td>
-                            <td>{{ $karyawan->tgl_masuk }}</td>
-                            <td>{{ $karyawan->gambarKaryawan->created_at ?? 'Belum Foto' }}</td>
-                            <!-- Menampilkan tgl_foto jika ada -->
-                            <td>
-                                {{-- <a href="{{ route('api.users.update', $karyawan->id) }}"
-                                    class="btn btn-warning">Edit</a> --}}
-                                <form action="{{ route('api.users.delete', $karyawan->id) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <!-- /.card-body -->
-    </div>
-    {{-- /.Table --}}
-    {{-- Modal Delete --}}
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-tools" style="padding: 16px">
+                    <div class="input-group input-group-sm" style="width: 400px;">
+                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                <div class="col" style="padding: 8px">
+                    <button type="button" class="btn btn-danger" id="deleteSelected">Hapus Data</button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#nikModal">Generate
+                        NIK</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#printIdCardModal">Cetak
+                        ID
+                        Card</button>
                 </div>
             </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0" style="height: 800px;">
+                <table class="table table-bordered table-striped table-head-fixed text-nowrap" id="employeetable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll"></th>
+                            <th>No</th>
+                            <th>NIK</th>
+                            <th>No. Foto</th>
+                            <th>Nama</th>
+                            <th>Level</th>
+                            <th>Departemen</th>
+                            <th>Foto</th>
+                            <th>Tgl. Daftar</th>
+                            <th>Tgl. Lahir</th>
+                            <th>Tgl. Masuk</th>
+                            <th>Tgl. Foto</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $karyawans = App\Models\KaryawanBaru::whereHas('gambarKaryawan')->get();
+                        ?>
+                        @foreach ($karyawans as $index => $karyawan)
+                            <tr>
+                                <td><input type="checkbox" class="rowCheckbox" data-id="{{ $karyawan->id }}"></td>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $karyawan->nik ?? '-' }}</td>
+                                <td>{{ $karyawan->gambarKaryawan->no_foto ?? 'N/A' }}</td>
+                                <!-- Menampilkan no_foto jika ada -->
+                                <td>{{ $karyawan->nama }}</td>
+                                <td>{{ $karyawan->posisi->level ?? 'N/A' }}</td> <!-- Menampilkan nama level -->
+                                <td>{{ $karyawan->departemen->job_department ?? 'N/A' }}</td>
+                                <!-- Menampilkan nama departemen -->
+                                <td>
+                                    @if ($karyawan->gambarKaryawan && $karyawan->gambarKaryawan->foto)
+                                        <!-- Cek apakah gambarKaryawan ada dan path-nya ada -->
+                                        <img src="{{ asset('storage/' . $karyawan->gambarKaryawan->foto) }}" alt="Foto"
+                                            width="100">
+                                    @else
+                                        Belum foto
+                                    @endif
+                                </td>
+                                <td>{{ $karyawan->created_at }}</td>
+                                <td>{{ $karyawan->tgl_lahir }}</td>
+                                <td>{{ $karyawan->tgl_masuk }}</td>
+                                <td>{{ $karyawan->gambarKaryawan->created_at ?? 'Belum Foto' }}</td>
+                                <!-- Menampilkan tgl_foto jika ada -->
+                                <td>
+                                    <button class="btn btn-warning btn-sm edit" data-id="{{ $karyawan->id }}">Edit</button>
+                                    <button class="btn btn-danger btn-sm delete"
+                                        data-id="{{ $karyawan->id }}">Delete</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
         </div>
     </div>
-    {{-- /. Modal Delete --}}
+    {{-- /.Table --}}
     {{-- Modal Generate NIK --}}
     <div class="modal fade" id="nikModal" tabindex="-1" role="dialog" aria-labelledby="nikModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -247,7 +237,7 @@
     </div>
     {{-- /.Modal Generate NIK --}}
     {{-- Template Foto --}}
-    <div class="col-8">
+    <div class="col-8" style="display: none;">
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Print ID Card</h3>
@@ -315,21 +305,6 @@
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <script>
         $(function() {
-            $("#employeetable").DataTable({
-                "scrollX": true,
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "buttons": ["excel", "pdf", "print"],
-                "columnDefs": [{
-                    "targets": 0, // Kolom pertama untuk checkbox
-                    "orderable": false, // Nonaktifkan pengurutan untuk kolom ini
-                    "render": function(data, type, row) {
-                        return '<input type="checkbox" class="rowCheckbox">';
-                    }
-                }]
-            }).buttons().container().appendTo('#employeetable_wrapper .col-md-6:eq(0)');
-
             // Fungsi untuk memilih semua checkbox
             $('#selectAll').on('click', function() {
                 var checked = this.checked;
@@ -347,6 +322,36 @@
                     $('#selectAll').prop('checked', true);
                 }
             });
+
+            // Event handler for delete button
+            $('#deleteSelected').on('click', function() {
+                var selectedIds = [];
+                $('.rowCheckbox:checked').each(function() {
+                    selectedIds.push($(this).data('id'));
+                });
+                if (selectedIds.length > 0) {
+                    // Perform delete operation with selectedIds
+                    console.log('Deleting IDs:', selectedIds);
+                    // Add your AJAX call or delete logic here
+                    $.ajax({
+                        url: "{{ route('delete.selected') }}", // URL to send the request
+                        type: 'POST',
+                        data: {
+                            ids: selectedIds,
+                            _token: '{{ csrf_token() }}' // CSRF token for security
+                        },
+                        success: function(response) {
+                            alert(response.success); // Show success message
+                            location.reload(); // Reload the page to see changes
+                        },
+                        error: function(xhr) {
+                            alert('An error occurred while deleting records.'); // Handle error
+                        }
+                    });
+                } else {
+                    alert('Please select at least one checkbox to delete.');
+                }
+            });
         });
     </script>
     <script>
@@ -360,110 +365,26 @@
     </script>
     {{-- CRUD --}}
     <script>
-        data_uri = "";
-        // Configure the webcam
-        Webcam.set({
-            width: 320,
-            height: 240,
-            image_format: 'jpeg',
-            jpeg_quality: 90
-        });
-
-        // Function to take a snapshot
-        function take_snapshot() {
-            Webcam.snap(function(data_uri) {
-                // Show the preview
-                document.getElementById('preview').src = data_uri;
-                document.getElementById('preview').style.display = 'block';
-                document.getElementById('preview').innerHTML = '<img src="' + data_uri + '"/>';
-
-                // Simpan data URI ke dalam input hidden
-                document.getElementById('imagePath').value = data_uri; // Menyimpan data URI ke input hidden
-
-            });
-        }
-
-
         $(document).ready(function() {
-            const checkbox = document.getElementById('myCheckbox');
-            const myDiv = document.getElementById('myDiv');
-            const shuterBtn = document.getElementById('captureBtn');
 
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    myDiv.classList.remove('hidden');
-                    shuterBtn.classList.remove('hidden');
-                    // Attach the webcam to the div
-                    Webcam.attach('#my_camera');
-                } else {
-                    myDiv.classList.add('hidden');
-                    shuterBtn.classList.add('hidden');
-                    Webcam.reset('#my_camera');
-                }
-            });
-
-            // Create form submit
-            $('#karyawanForm').on('submit', function(event) {
-                event.preventDefault(); // Mencegah form dari submit biasa  
-                // Prepare form data
-                var imageData = $('#imagePath').val(); // Ambil data URI dari input hidden
-
-                // Buat payload JSON
-                var payload = {
-                    nik: $('#nik').val(),
-                    nama: $('#nama').val(),
-                    level: $('#level').val(),
-                    workplace: $('#workplace').val(),
-                    tempat_lahir: $('#tempat_lahir').val(),
-                    tgl_lahir: $('#tgl_lahir').val(),
-                    tgl_masuk: $('#tgl_masuk').val(),
-                    no_foto: $('#no_foto').val(),
-                    foto: imageData // Tambahkan data gambar
-                };
-
-                $.ajax({
-                    url: '{{ route('karyawan-baru.store') }}',
-                    type: 'POST',
-                    data: payload,
-                    success: function(response) {
-                        // Handle success
-                        toastr.success('Data Kandidat telah disimpan');
-                        // Anda bisa mereset form atau melakukan redirect  
-                        $('#karyawanForm')[0].reset();
-                        table.ajax.reload()
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error  
-                        var errors = xhr.responseJSON.errors;
-                        if (errors) {
-                            $.each(errors, function(key, value) {
-                                alert(value[0]);
-                            });
-                        } else {
-                            toastr.error('An error occurred. Please try again.');
-                        }
-                    }
+            // Update button click
+            $('#employeetable').on('click', '.edit', function() {
+                var id = $(this).data('id');
+                $.get('/api/karyawan/' + id, function(data) {
+                    $('#userId').val(data.id);
+                    $('#nik').val(data.nik);
+                    $('#nama').val(data.nama);
+                    $('#level').val(data.level);
+                    $('#workplace').val(data.workplace);
+                    $('#tempat_lahir').val(data.tempat_lahir);
+                    $('#tgl_lahir').val(data.tgl_lahir);
+                    $('#tgl_masuk').val(data.tgl_masuk);
+                    $('#editModal').modal('show');
                 });
             });
 
-            // Update button click
-            // $('#users-table').on('click', '.edit', function() {
-            //     var id = $(this).data('id');
-            //     $.get('/api/karyawan/' + id, function(data) {
-            //         $('#userId').val(data.id);
-            //         $('#nik').val(data.nik);
-            //         $('#nama').val(data.nama);
-            //         $('#level').val(data.level);
-            //         $('#workplace').val(data.workplace);
-            //         $('#tempat_lahir').val(data.tempat_lahir);
-            //         $('#tgl_lahir').val(data.tgl_lahir);
-            //         $('#tgl_masuk').val(data.tgl_masuk);
-            //         // $('#editModal').modal('show');
-            //     });
-            // });
-
             // Delete button click
-            $('#karyawanTable').on('click', '.delete', function() {
+            $('#employeetable').on('click', '.delete', function() {
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this user?')) {
                     $.ajax({
@@ -475,6 +396,7 @@
                     });
                 }
             });
+
         });
 
         /*

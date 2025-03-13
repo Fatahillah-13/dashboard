@@ -5,7 +5,7 @@ return [
     'main_navigation' => 'MAIN NAVIGATION',
     'blog' => 'Blog',
     'pages' => 'Pages',
-    'account_settings' => 'ACCOUNT SETTINGS',
+    'account_settings' => 'MAIN MENU',
     'profile' => 'Profile',
     'change_password' => 'Change Password',
     'multilevel' => 'Multi Level',

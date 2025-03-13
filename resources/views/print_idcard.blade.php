@@ -2,7 +2,7 @@
 
 {{-- Customize layout sections --}}
 @section('plugins.Datatables', true)
-@section('subtitle', 'Welcome')
+@section('subtitle', '')
 @section('content_header_title', 'Home')
 @section('content_header_subtitle', 'Welcome')
 
@@ -208,7 +208,6 @@
                                     ID
                                     Card</button>
                             </div>
-                            <a href="/printexample">contoh print</a>
                         </div>
                         <!-- /.card-body -->
                     </div>

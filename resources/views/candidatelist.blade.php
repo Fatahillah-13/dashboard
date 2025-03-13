@@ -2,7 +2,7 @@
 
 {{-- Customize layout sections --}}
 @section('plugins.Datatables', true)
-@section('subtitle', 'Welcome')
+@section('subtitle', '')
 @section('content_header_title', 'Home')
 @section('content_header_subtitle', 'Welcome')
 
@@ -308,7 +308,7 @@
                     </thead>
                     <tbody>
                         <?php
-                        $karyawans = App\Models\KaryawanBaru::all();
+                        $karyawans = App\Models\KaryawanBaru::whereDoesntHave('gambarKaryawan')->get();
                         ?>
                         @foreach ($karyawans as $index => $karyawan)
                             <tr>
@@ -335,14 +335,10 @@
                                 <td>{{ $karyawan->gambarKaryawan->created_at ?? 'Belum Foto' }}</td>
                                 <!-- Menampilkan tgl_foto jika ada -->
                                 <td>
-                                    {{-- <a href="{{ route('api.users.update', $karyawan->id) }}"
-                                        class="btn btn-warning">Edit</a> --}}
-                                    <form action="{{ route('api.users.delete', $karyawan->id) }}" method="POST"
-                                        style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                    </form>
+                                    <button class="btn btn-warning btn-sm edit"
+                                        data-id="{{ $karyawan->id }}">Edit</button>
+                                    <button class="btn btn-danger btn-sm delete"
+                                        data-id="{{ $karyawan->id }}">Delete</button>
                                 </td>
                             </tr>
                         @endforeach

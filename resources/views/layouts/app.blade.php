@@ -33,18 +33,10 @@
             display: none;
         }
 
-        .dataTables_wrapper {
-            width: 100%;
-        }
-
-        table.dataTable {
-            width: auto;
-            min-width: 100%;
-        }
-
         th,
         td {
             width: auto;
+            max-width: fit-content;
             padding: 8px;
             text-align: left;
         }
@@ -52,20 +44,6 @@
         th {
             background-color: #f2f2f2;
             border-bottom: 2px solid #ddd;
-        }
-
-        /* Memastikan lebar header dan kolom sama */
-        .dataTables_scrollHeadInner {
-            width: 100% !important;
-        }
-
-        .dataTables_scrollBody {
-            width: 100% !important;
-        }
-
-        .dataTables_scrollHead table,
-        .dataTables_scrollBody table {
-            width: 100% !important;
         }
 
         .select2-selection--single {

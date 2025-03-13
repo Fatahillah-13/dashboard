@@ -138,6 +138,14 @@ class KaryawanBaruController extends Controller
         return response()->json(['success' => 'User deleted successfully.']);
     }
 
+    public function deleteSelected(Request $request)
+    {
+        $ids = $request->input('ids'); // Get the array of IDs from the request
+        KaryawanBaru::with('gambarKaryawan', 'posisi', 'departemen')->whereIn('id', $ids)->delete(); // Delete the records
+
+        return response()->json(['success' => 'Records deleted successfully.']);
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
