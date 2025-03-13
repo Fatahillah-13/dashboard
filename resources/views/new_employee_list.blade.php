@@ -10,29 +10,30 @@
 {{-- Content body: main page content --}}
 @section('content_body')
     {{-- Buttons --}}
-
+    <div class="col" style="padding: 8px">
+        <button type="button" class="btn btn-danger" id="deleteSelected">Hapus Data</button>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#nikModal">Generate
+            NIK</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#printIdCardModal">Cetak
+            ID
+            Card</button>
+    </div>
     {{-- /.Buttons --}}
     {{-- Table --}}
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <div class="card-tools" style="padding: 16px">
+                <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 400px;">
-                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                        <input type="text" name="table_search" id="searchInput" class="form-control float-right"
+                            placeholder="Search">
+
                         <div class="input-group-append">
-                            <button type="submit" class="btn btn-default">
+                            <button type="submit" class="btn btn-default" id="searchButton">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
                     </div>
-                </div>
-                <div class="col" style="padding: 8px">
-                    <button type="button" class="btn btn-danger" id="deleteSelected">Hapus Data</button>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#nikModal">Generate
-                        NIK</button>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#printIdCardModal">Cetak
-                        ID
-                        Card</button>
                 </div>
             </div>
             <!-- /.card-header -->
@@ -303,6 +304,7 @@
     <script src="https://cdn.datatables.net/select/3.0.0/js/dataTables.select.js"></script>
     <script src="https://cdn.datatables.net/select/3.0.0/js/select.dataTables.js"></script>
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <script src="lodash.js"></script>
     <script>
         $(function() {
             // Fungsi untuk memilih semua checkbox
@@ -645,58 +647,58 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('#showEmployeeFilterbtn').on('click', function(e) {
-                e.preventDefault(); // Mencegah form submit
+            // $('#showEmployeeFilterbtn').on('click', function(e) {
+            //     e.preventDefault(); // Mencegah form submit
 
-                // Ambil nilai tanggal dari input
-                var date = $('#startworkdate').val();
+            //     // Ambil nilai tanggal dari input
+            //     var date = $('#startworkdate').val();
 
-                // Lakukan permintaan AJAX
-                $.ajax({
-                    url: '/karyawan/filter', // Ganti dengan URL endpoint Anda
-                    method: 'GET',
-                    data: {
-                        date: date
-                    },
-                    success: function(response) {
-                        // Kosongkan tabel sebelum menambahkan data baru
-                        $('#employeePrintTable tbody').empty();
+            //     // Lakukan permintaan AJAX
+            //     $.ajax({
+            //         url: '/karyawan/filter', // Ganti dengan URL endpoint Anda
+            //         method: 'GET',
+            //         data: {
+            //             date: date
+            //         },
+            //         success: function(response) {
+            //             // Kosongkan tabel sebelum menambahkan data baru
+            //             $('#employeePrintTable tbody').empty();
 
-                        // Tambahkan data ke tabel
-                        response.data.forEach(function(karyawan, index) {
-                            // Cek panjang nama karyawan
-                            var namaStyle = karyawan.nama.length > 17 ?
-                                'style="color: red; text-transform: uppercase;"' :
-                                'style="text-transform: uppercase;"';
-                            var editable = karyawan.nama.length > 17 ?
-                                'contenteditable="true"' : '';
-                            $('#employeePrintTable tbody').append(`
-                                <tr>
-                                    <td><input type="checkbox" class="rowPrintCheckbox" name="checkbox" id="rowPrintCheckbox${index}" checked></td>
-                                    <td>${index + 1}</td>
-                                    <td>${karyawan.nik || '-'}</td>
-                                    <td ${namaStyle} ${editable}>${karyawan.nama}</td>
-                                    <td>${karyawan.posisi.level || 'N/A'}</td>
-                                    <td>${karyawan.departemen.job_department || 'N/A'}</td>
-                                    <td>${karyawan.gambarkaryawan.no_foto || 'N/A'}</td>
-                                    <td>
-                                        ${karyawan.gambarkaryawan && karyawan.gambarkaryawan.foto ? 
-                                            `<img src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
-                                            'Belum foto'}
-                                    </td>
-                                    <td><input type="checkbox" class="rowCtpatCheckbox" name="checkbox" id="rowCtpatCheckbox${index}"></td>
-                                </tr>
-                            `);
-                        });
-                        $('#selectPrintAll').prop('checked', true);
+            //             // Tambahkan data ke tabel
+            //             response.data.forEach(function(karyawan, index) {
+            //                 // Cek panjang nama karyawan
+            //                 var namaStyle = karyawan.nama.length > 17 ?
+            //                     'style="color: red; text-transform: uppercase;"' :
+            //                     'style="text-transform: uppercase;"';
+            //                 var editable = karyawan.nama.length > 17 ?
+            //                     'contenteditable="true"' : '';
+            //                 $('#employeePrintTable tbody').append(`
+            //                     <tr>
+            //                         <td><input type="checkbox" class="rowPrintCheckbox" name="checkbox" id="rowPrintCheckbox${index}" checked></td>
+            //                         <td>${index + 1}</td>
+            //                         <td>${karyawan.nik || '-'}</td>
+            //                         <td ${namaStyle} ${editable}>${karyawan.nama}</td>
+            //                         <td>${karyawan.posisi.level || 'N/A'}</td>
+            //                         <td>${karyawan.departemen.job_department || 'N/A'}</td>
+            //                         <td>${karyawan.gambarkaryawan.no_foto || 'N/A'}</td>
+            //                         <td>
+            //                             ${karyawan.gambarkaryawan && karyawan.gambarkaryawan.foto ? 
+            //                                 `<img src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
+            //                                 'Belum foto'}
+            //                         </td>
+            //                         <td><input type="checkbox" class="rowCtpatCheckbox" name="checkbox" id="rowCtpatCheckbox${index}"></td>
+            //                     </tr>
+            //                 `);
+            //             });
+            //             $('#selectPrintAll').prop('checked', true);
 
-                    },
-                    error: function(xhr) {
-                        console.error(xhr);
-                        alert('Terjadi kesalahan saat mengambil data.');
-                    }
-                });
-            });
+            //         },
+            //         error: function(xhr) {
+            //             console.error(xhr);
+            //             alert('Terjadi kesalahan saat mengambil data.');
+            //         }
+            //     });
+            // });
 
             $('#printIdCardsButton').on('click', async function() {
                 const {
@@ -837,5 +839,32 @@
                 resolve();
             });
         }
+    </script>
+    <script>
+        var $rows = $('#employeetable tr');
+        $('#searchInput').keyup(debounce(function() {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+            $rows.show().filter(function() {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return !~text.indexOf(val);
+            }).hide();
+        }, 300));
+
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this,
+                    args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
     </script>
 @endpush
