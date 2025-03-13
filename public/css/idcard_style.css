@@ -51,6 +51,7 @@
     font-weight: 400;
 }
 .fullname-parent {
+    /* padding-top: 16px; */
     width: 380px;
     align-self: stretch;
     display: flex;
@@ -63,7 +64,7 @@
     position: absolute;
     top: 212px;
     bottom: 24px;
-    left: calc(50% - 210px);
+    left: calc(50% - 195px);
     width: 380px;
     height: 480px;
     display: flex;

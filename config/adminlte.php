@@ -329,25 +329,38 @@ return [
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'List Kandidat',
-            'url' => '/candidate',
-            'icon' => 'fas fa fa-users',
+            'text' => 'Cetak ID Card Baru',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'List Kandidat',
+                    'url' => '/candidate',
+                ],
+                [
+                    'text' => 'List Karyawan Baru',
+                    'url' => '/new-employee',
+                ],
+                [
+                    'text' => 'Cetak ID Card',
+                    'url' => '/print',
+                ],
+            ],
         ],
         [
-            'text' => 'List Karyawan Baru',
-            'url' => '/new-employee',
-            'icon' => 'fas fa fa-users',
+            'text' => 'Cetak Ulang ID Card',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'Cetak',
+                    'url' => '/',
+                ],
+            ],
         ],
-        [
-            'text' => 'Cetak ID Card',
-            'url' => '/print',
-            'icon' => 'fas fa fa-camera',
-        ],
-        [
-            'text' => 'profile',
-            'url' => 'admin/profile',
-            'icon' => 'fas fa-fw fa-user',
-        ],
+        // [
+        //     'text' => 'profile',
+        //     'url' => 'admin/profile',
+        //     'icon' => 'fas fa-fw fa-user',
+        // ],
         // [
         //     'text' => 'multilevel',
         //     'icon' => 'fas fa-fw fa-share',
@@ -388,19 +401,9 @@ return [
         // ],
         ['header' => 'labels'],
         [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
+            'text' => 'Users',
+            'url' => '/',
+            'icon' => 'fas fa-fw fa-users',
         ],
     ],
 

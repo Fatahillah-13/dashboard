@@ -139,7 +139,7 @@
                                         class="select-department form-control nama_edit2" onchange="GetDataKaryawan();"
                                         required>
                                         @php
-                                            $karyawans_belum = App\Models\KaryawanBaru::all();
+                                            $karyawans_belum = App\Models\KaryawanBaru::where('status', 1)->get();
                                         @endphp
                                         @foreach ($karyawans_belum as $karyawan)
                                             <option value="{{ $karyawan->id }}">Nama : {{ $karyawan->nama }} | Tempat Lahir
@@ -277,7 +277,7 @@
 
                 <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                        <input type="text" name="table_search" id="searchInput" class="form-control float-right" placeholder="Search">
 
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default">
@@ -369,7 +369,6 @@
         </div>
     </div>
     {{-- /. Modal Delete --}}
-
     {{-- Modal Import Excel --}}
     <div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -421,6 +420,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
         integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="lodash.js"></script>
     <script>
         $(document).ready(function() {
             $('.select-level').select2();
@@ -696,5 +696,32 @@
 
             });
         });
+    </script>
+    <script>
+        var $rows = $('#karyawanTable tr');
+        $('#searchInput').keyup(debounce(function() {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+            $rows.show().filter(function() {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return !~text.indexOf(val);
+            }).hide();
+        }, 300));
+
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this,
+                    args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
     </script>
 @endpush

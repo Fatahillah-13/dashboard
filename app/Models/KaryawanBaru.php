@@ -21,6 +21,7 @@ class KaryawanBaru extends Model
         'tempat_lahir',
         'tgl_lahir',
         'tgl_masuk',
+        'status',
     ];
     // Definisikan relasi satu ke satu  
     public function gambarKaryawan()

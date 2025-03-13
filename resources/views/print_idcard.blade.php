@@ -66,7 +66,7 @@
                                                     $('#preview').html(
                                                         '<img src="{{ asset('storage/') }}' +
                                                         '/' + data[1].foto +
-                                                        '" alt="Foto" width="410" height="420">'
+                                                        '" alt="Foto" width="360" height="420">'
                                                     );
                                                 } else {
                                                     $('#preview').html(
@@ -226,10 +226,14 @@
                     function selectCTPAT() {
                         var ctpat = document.getElementById('ctpat_check');
                         var department = document.getElementById('department').innerText;
+                        var joblevel = document.getElementById('joblevel').innerText;
                         console.log(department);
 
-                        if (ctpat.checked && department === 'HRD') {
+                        if (ctpat.checked) {
+                            $('.fullname-parent').css('padding-top', '24px');
+                        }
 
+                        if (ctpat.checked && department === 'HRD') {
                             $('#bg-template').html(
                                 '<img class="it-icon" src="{{ asset('assets/ctpat/sea_hrd.jpg') }}' +
                                 '" alt="">'
@@ -259,9 +263,14 @@
                                 '<img class="it-icon" src="{{ asset('assets/ctpat/qip.jpg') }}' +
                                 '" alt="">'
                             );
-                        } else if (ctpat.checked) {
+                        } else if (ctpat.checked && joblevel === 'OPERATOR') {
                             $('#bg-template').html(
                                 '<img class="it-icon" src="{{ asset('assets/ctpat/production.jpg') }}' +
+                                '" alt="">'
+                            );
+                        } else if (ctpat.checked) {
+                            $('#bg-template').html(
+                                '<img class="it-icon" src="{{ asset('assets/ctpat/sea_hrd.jpg') }}' +
                                 '" alt="">'
                             );
                         }
@@ -334,6 +343,29 @@
                 pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
                 pdf.save(`${name.value}_${nik.value}.pdf`);
             });
+
+            // Update the status in database
+            $.ajax({
+                url: '/karyawan/updatestatus', // Update with your endpoint
+                method: 'POST',
+                data: {
+                    employees: [{
+                        nik: nik
+                            .value, // Assuming you want to update the status for this employee
+                        // Add other fields if necessary
+                    }]
+                },
+                success: function(response) {
+                    toastr.success('Status berhasil diperbarui.');
+                },
+                error: function(xhr) {
+                    console.error(xhr);
+                    const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr
+                        .responseJSON.message : 'Terjadi kesalahan saat memperbarui status.';
+                    toastr.error(errorMessage);
+                }
+            });
+
         });
     </script>
 @endpush

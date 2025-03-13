@@ -382,4 +382,27 @@ class KaryawanBaruController extends Controller
 
         return response()->json(['error' => 'Karyawan tidak ditemukan.'], 404);
     }
+
+    public function updateStatus(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'employees' => 'required|array',
+            'employees.*.nik' => 'required|string', // Assuming 'nik' is a string
+            // Add other validation rules as necessary
+        ]);
+
+        // Loop through each employee and update their status
+        foreach ($request->employees as $employeeData) {
+            $employee = KaryawanBaru::where('nik', $employeeData['nik'])->first();
+            if ($employee) {
+                // Update the employee's status or any other fields as necessary
+                $employee->status = 2; // Change this to the actual status you want to set
+                $employee->save();
+            }
+        }
+
+        // Return a success response
+        return response()->json(['message' => 'Employee status updated successfully.']);
+    }
 }

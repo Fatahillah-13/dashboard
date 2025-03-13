@@ -647,58 +647,58 @@
     </script>
     <script>
         $(document).ready(function() {
-            // $('#showEmployeeFilterbtn').on('click', function(e) {
-            //     e.preventDefault(); // Mencegah form submit
+            $('#showEmployeeFilterbtn').on('click', function(e) {
+                e.preventDefault(); // Mencegah form submit
 
-            //     // Ambil nilai tanggal dari input
-            //     var date = $('#startworkdate').val();
+                // Ambil nilai tanggal dari input
+                var date = $('#startworkdate').val();
 
-            //     // Lakukan permintaan AJAX
-            //     $.ajax({
-            //         url: '/karyawan/filter', // Ganti dengan URL endpoint Anda
-            //         method: 'GET',
-            //         data: {
-            //             date: date
-            //         },
-            //         success: function(response) {
-            //             // Kosongkan tabel sebelum menambahkan data baru
-            //             $('#employeePrintTable tbody').empty();
+                // Lakukan permintaan AJAX
+                $.ajax({
+                    url: '/karyawan/filter', // Ganti dengan URL endpoint Anda
+                    method: 'GET',
+                    data: {
+                        date: date
+                    },
+                    success: function(response) {
+                        // Kosongkan tabel sebelum menambahkan data baru
+                        $('#employeePrintTable tbody').empty();
 
-            //             // Tambahkan data ke tabel
-            //             response.data.forEach(function(karyawan, index) {
-            //                 // Cek panjang nama karyawan
-            //                 var namaStyle = karyawan.nama.length > 17 ?
-            //                     'style="color: red; text-transform: uppercase;"' :
-            //                     'style="text-transform: uppercase;"';
-            //                 var editable = karyawan.nama.length > 17 ?
-            //                     'contenteditable="true"' : '';
-            //                 $('#employeePrintTable tbody').append(`
-            //                     <tr>
-            //                         <td><input type="checkbox" class="rowPrintCheckbox" name="checkbox" id="rowPrintCheckbox${index}" checked></td>
-            //                         <td>${index + 1}</td>
-            //                         <td>${karyawan.nik || '-'}</td>
-            //                         <td ${namaStyle} ${editable}>${karyawan.nama}</td>
-            //                         <td>${karyawan.posisi.level || 'N/A'}</td>
-            //                         <td>${karyawan.departemen.job_department || 'N/A'}</td>
-            //                         <td>${karyawan.gambarkaryawan.no_foto || 'N/A'}</td>
-            //                         <td>
-            //                             ${karyawan.gambarkaryawan && karyawan.gambarkaryawan.foto ? 
-            //                                 `<img src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
-            //                                 'Belum foto'}
-            //                         </td>
-            //                         <td><input type="checkbox" class="rowCtpatCheckbox" name="checkbox" id="rowCtpatCheckbox${index}"></td>
-            //                     </tr>
-            //                 `);
-            //             });
-            //             $('#selectPrintAll').prop('checked', true);
+                        // Tambahkan data ke tabel
+                        response.data.forEach(function(karyawan, index) {
+                            // Cek panjang nama karyawan
+                            var namaStyle = karyawan.nama.length > 17 ?
+                                'style="color: red; text-transform: uppercase;"' :
+                                'style="text-transform: uppercase;"';
+                            var editable = karyawan.nama.length > 17 ?
+                                'contenteditable="true"' : '';
+                            $('#employeePrintTable tbody').append(`
+                                <tr>
+                                    <td><input type="checkbox" class="rowPrintCheckbox" name="checkbox" id="rowPrintCheckbox${index}" checked></td>
+                                    <td>${index + 1}</td>
+                                    <td>${karyawan.nik || '-'}</td>
+                                    <td ${namaStyle} ${editable}>${karyawan.nama}</td>
+                                    <td>${karyawan.posisi.level || 'N/A'}</td>
+                                    <td>${karyawan.departemen.job_department || 'N/A'}</td>
+                                    <td>${karyawan.gambarkaryawan.no_foto || 'N/A'}</td>
+                                    <td>
+                                        ${karyawan.gambarkaryawan && karyawan.gambarkaryawan.foto ? 
+                                            `<img src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
+                                            'Belum foto'}
+                                    </td>
+                                    <td><input type="checkbox" class="rowCtpatCheckbox" name="checkbox" id="rowCtpatCheckbox${index}"></td>
+                                </tr>
+                            `);
+                        });
+                        $('#selectPrintAll').prop('checked', true);
 
-            //         },
-            //         error: function(xhr) {
-            //             console.error(xhr);
-            //             alert('Terjadi kesalahan saat mengambil data.');
-            //         }
-            //     });
-            // });
+                    },
+                    error: function(xhr) {
+                        console.error(xhr);
+                        alert('Terjadi kesalahan saat mengambil data.');
+                    }
+                });
+            });
 
             $('#printIdCardsButton').on('click', async function() {
                 const {
@@ -734,6 +734,24 @@
 
                 // Create ID cards for each employee
                 await generateIDCards(employees, pdf);
+
+                // Update the status in database
+                $.ajax({
+                    url: '/karyawan/updatestatus', // Ganti dengan URL endpoint Anda
+                    method: 'POST',
+                    data: {
+                        employees: employees
+                    },
+                    success: function(response) {
+                        toastr.success('Data berhasil diperbarui.');
+                    },
+                    error: function(xhr) {
+                        console.error(xhr);
+                        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr
+                            .responseJSON.message : 'Terjadi kesalahan saat memperbarui status.';
+                        toastr.error(errorMessage);
+                    }
+                });
 
                 // After all ID cards are generated, save the PDF
                 pdf.save('employee_id_cards.pdf');
