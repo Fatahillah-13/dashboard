@@ -72,6 +72,7 @@ Route::get('/api/karyawan', [KaryawanBaruController::class, 'getUsers'])->name('
 Route::post('/api/karyawan/store', [KaryawanBaruController::class, 'store'])->name('karyawan-baru.store');
 Route::post('/api/karyawan/update/{id}', [KaryawanBaruController::class, 'update'])->name('api.users.update');
 Route::post('/karyawan/updatestatus', [KaryawanBaruController::class, 'updateStatus']);
+Route::post('/karyawan/statusmasuk/{id}', [KaryawanBaruController::class, 'updateStatusMasuk'])->name('karyawan.update.statusmasuk');
 Route::get('/autocomplete', [KaryawanBaruController::class, 'autocomplete'])->name('autocomplete');
 Route::get('/autocomplete2', [KaryawanBaruController::class, 'autocomplete2'])->name('autocomplete2');
 Route::get('/autocomplete3', [KaryawanBaruController::class, 'autocomplete3'])->name('autocomplete3');

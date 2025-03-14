@@ -350,10 +350,18 @@ class KaryawanBaruController extends Controller
         $karyawans = KaryawanBaru::where('tgl_masuk', $tglmasuk)->get();
 
         foreach ($karyawans as $karyawan) {
+            // Check if the candidate has withdrawn (status = 2)
+            if ($karyawan->status == 2) {
+                return response()->json(['message' => 'Kandidat ' . $karyawan->nama . ' mengundurkan diri.'], 400);
+            }
+
+            // Check if the new NIK already exists
             $existingKaryawan = KaryawanBaru::where('nik', $prefix . $newnik)->first();
             if ($existingKaryawan) {
                 return response()->json(['message' => 'NIK already exists for another employee.'], 400);
             }
+
+            // Update the NIK for the current employee
             $karyawan->nik = $prefix . $newnik;
             $karyawan->save();
             $newnik++; // Increment the NIK number for the next employee
@@ -388,21 +396,37 @@ class KaryawanBaruController extends Controller
         // Validate the incoming request
         $request->validate([
             'employees' => 'required|array',
-            'employees.*.nik' => 'required|string', // Assuming 'nik' is a string
-            // Add other validation rules as necessary
+            'employees.*.nik' => 'required|string',
+            'employees.*.status' => 'required|integer', // Ensure status is an integer
         ]);
 
         // Loop through each employee and update their status
         foreach ($request->employees as $employeeData) {
             $employee = KaryawanBaru::where('nik', $employeeData['nik'])->first();
             if ($employee) {
-                // Update the employee's status or any other fields as necessary
-                $employee->status = 2; // Change this to the actual status you want to set
+                // Update the employee's status
+                $employee->status = $employeeData['status']; // Use the status from the request
                 $employee->save();
             }
         }
 
         // Return a success response
         return response()->json(['message' => 'Employee status updated successfully.']);
+    }
+
+    public function updateStatusMasuk(Request $request, $id)
+    {
+        // Find the employee by ID
+        $karyawan = KaryawanBaru::find($id);
+
+        if ($karyawan) {
+            // Update the status (assuming you have a 'status' field)
+            $karyawan->status = 2; // or whatever status you want to set
+            $karyawan->save();
+
+            return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Employee not found.'], 404);
     }
 }

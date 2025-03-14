@@ -326,7 +326,12 @@ return [
         [
             'text' => 'Home',
             'url' => 'home',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-home',
+        ],
+        [
+            'text' => 'Data Sudah Foto',
+            'url' => '/',
+            'icon' => 'fas fa-fw fa-users',
         ],
         [
             'text' => 'Cetak ID Card Baru',

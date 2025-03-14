@@ -58,7 +58,7 @@
                     </thead>
                     <tbody>
                         <?php
-                        $karyawans = App\Models\KaryawanBaru::whereHas('gambarKaryawan')->get();
+                        $karyawans = App\Models\KaryawanBaru::whereIn('status', [1, 2])->whereHas('gambarKaryawan')->get();
                         ?>
                         @foreach ($karyawans as $index => $karyawan)
                             <tr>
@@ -89,6 +89,9 @@
                                     <button class="btn btn-warning btn-sm edit" data-id="{{ $karyawan->id }}">Edit</button>
                                     <button class="btn btn-danger btn-sm delete"
                                         data-id="{{ $karyawan->id }}">Delete</button>
+                                    <button class="btn btn-success btn-sm statusbtn" id="statusBtn"
+                                        data-id="{{ $karyawan->id }}">Batal
+                                        Masuk</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -206,28 +209,6 @@
                             </table>
                         </div>
                     </form>
-                    {{-- <div id="idCardTemplate" style="display: none;">
-                        <div class="print" id="print">
-                            <div class="it-parent" id="it-parent">
-                                <div class="bg-template" id="bg-template">
-                                    <img class="it-icon" src="{{ asset('assets/img/template_idcard_staffup.png') }}"
-                                        alt="">
-                                </div>
-                                <div class="photo-parent">
-                                    <div class="preview" id="preview">
-                                        <img class="photo-icon" alt=""
-                                            src="{{ asset('assets/img/picture_icon.png') }}">
-                                    </div>
-                                    <div class="fullname-parent">
-                                        <b class="fullname" id="fullname">FULLNAME</b>
-                                        <div class="department" id="department">DEPARTMENT</div>
-                                        <div class="joblevel" id="joblevel">LEVEL</div>
-                                        <div class="nikid" id="nikid">NIK ID</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -399,59 +380,33 @@
                 }
             });
 
-        });
+            $('#employeetable').on('click', '.statusbtn', function() {
+                var nik = $(this).data('id')
+            .toString(); // Get the NIK from the button's data attribute and convert to string
 
-        /*
-        $(document).ready(function() {
-            $('#nama_edit, #tgl_lahir_edit').on('input change', function() {
-                var nama = $('#nama_edit').val();
-                var tgl_lahir = $('#tgl_lahir_edit').val();
-
-                if (nama && tgl_lahir) {
-                    $.ajax({
-                        url: '{{ route('autocomplete') }}', // Ganti dengan URL endpoint Anda
-                        type: 'GET',
-                        data: {
-                            nama: nama,
-                            tgl_lahir: tgl_lahir
-                        },
-                        success: function(data) {
-                            if (data.length > 0) {
-                                $.each(data, function(index, karyawan) {
-                                    $('#id_candidate').val(karyawan.id);
-                                    $('#tempat_lahir_edit').val(karyawan.tempat_lahir);
-                                    $('#no_foto_edit').val(karyawan.gambarkaryawan
-                                        .no_foto);
-                                    $('#level_edit').val(karyawan.posisi.id).trigger(
-                                        'change');
-                                    $('#workplace_edit').val(karyawan.departemen.id)
-                                        .trigger('change');
-                                    $('#tgl_masuk_edit').val(karyawan.tgl_masuk)
-                                        .trigger('change');
-                                    if (karyawan.gambarkaryawan && karyawan
-                                        .gambarkaryawan.foto) {
-                                        $('#preview_edit').html(
-                                            '<img src="{{ asset('storage/') }}' +
-                                            '/' + karyawan.gambarkaryawan.foto +
-                                            '" alt="Foto" width="150" height="150">'
-                                        );
-                                    } else {
-                                        $('#preview_edit').html(
-                                            '<img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture" width="150" height="150">'
-                                        );
-                                    }
-
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Gagal mengambil data:', error);
-                        }
-                    });
-                }
+                $.ajax({
+                    url: '/karyawan/updatestatus', // Update with your endpoint
+                    method: 'POST',
+                    data: {
+                        employees: [{
+                            nik: nik, // Use the NIK directly
+                            status: 2, // Set the status you want to update
+                        }],
+                    },
+                    success: function(response) {
+                        toastr.success('Status berhasil diperbarui.'); // Show success message
+                    },
+                    error: function(xhr) {
+                        console.error(xhr); // Log the error for debugging
+                        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr
+                            .responseJSON.message :
+                            'Terjadi kesalahan saat memperbarui status.';
+                        toastr.error(errorMessage); // Show error message
+                    }
+                });
             });
+
         });
-        */
     </script>
     <script>
         data_uri_update = "";
@@ -634,6 +589,8 @@
                     },
                     success: function(response) {
                         toastr.success('Data berhasil diperbarui.');
+                        console.log(prefix + newnik);
+
                     },
                     error: function(xhr) {
                         console.error(xhr);
@@ -747,8 +704,10 @@
                     },
                     error: function(xhr) {
                         console.error(xhr);
-                        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr
-                            .responseJSON.message : 'Terjadi kesalahan saat memperbarui status.';
+                        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ?
+                            xhr
+                            .responseJSON.message :
+                            'Terjadi kesalahan saat memperbarui status.';
                         toastr.error(errorMessage);
                     }
                 });
@@ -884,5 +843,32 @@
                 if (callNow) func.apply(context, args);
             };
         };
+    </script>
+    <script>
+        $(document).on('click', '.statusbtn', function() {
+            var karyawanId = $(this).data('id');
+
+            if (confirm('Are you sure you want to change the status?')) {
+                $.ajax({
+                    url: '/karyawan/statusmasuk/' + karyawanId,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Include CSRF token for security
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                            // Optionally, you can refresh the page or update the UI
+                            location.reload(); // Reload the page to see the changes
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('An error occurred: ' + xhr.responseText);
+                    }
+                });
+            }
+        });
     </script>
 @endpush

@@ -35,9 +35,9 @@
 
         th,
         td {
-            width: auto;
-            max-width: fit-content;
-            padding: 8px;
+            width:70px;
+            /* max-width: 200px; */
+            padding: 2px;
             text-align: left;
         }
 

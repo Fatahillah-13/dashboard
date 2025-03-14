@@ -139,7 +139,7 @@
                                         class="select-department form-control nama_edit2" onchange="GetDataKaryawan();"
                                         required>
                                         @php
-                                            $karyawans_belum = App\Models\KaryawanBaru::where('status', 1)->get();
+                                            $karyawans_belum = App\Models\KaryawanBaru::whereIn('status', [1, 2])->get();
                                         @endphp
                                         @foreach ($karyawans_belum as $karyawan)
                                             <option value="{{ $karyawan->id }}">Nama : {{ $karyawan->nama }} | Tempat Lahir

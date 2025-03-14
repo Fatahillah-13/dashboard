@@ -352,7 +352,7 @@
                     employees: [{
                         nik: nik
                             .value, // Assuming you want to update the status for this employee
-                        // Add other fields if necessary
+                        status: 3,// Add other fields if necessary
                     }]
                 },
                 success: function(response) {
