@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\CandidateImport;
 use Illuminate\Http\Request;
 use App\Models\KaryawanBaru;
 use App\Models\GambarKaryawan;
@@ -10,6 +11,9 @@ use App\Models\Departemen;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Session;
 
 class KaryawanBaruController extends Controller
 {
@@ -23,48 +27,6 @@ class KaryawanBaruController extends Controller
     {
         $karyawans = KaryawanBaru::with(['gambarkaryawan', 'posisi', 'departemen'])->get(); // Mengambil data karyawan beserta gambarnya, level, dan departemen
         return $karyawans;
-    }
-
-    public function getUsers()
-    {
-        $karyawans = KaryawanBaru::with('gambarKaryawan', 'posisi', 'departemen')->select('karyawan_barus.*'); // Ambil semua data pengguna
-        return datatables()->of($karyawans) // Menggunakan DataTables
-            ->addColumn('no_foto', function ($gambar) {
-                return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->no_foto : 0; // Menampilkan nama karyawan  
-            })
-            ->addColumn('foto', function ($karyawan) {
-                if ($karyawan->gambarKaryawan && $karyawan->gambarKaryawan->foto) {
-                    $fotoPath = asset('storage/' . $karyawan->gambarKaryawan->foto);
-                    $fotoTitle = $karyawan->gambarKaryawan->foto;
-                    return '<button class="btn btn-primary foto-btn" data-foto-path="' . $fotoPath . '" data-foto-title="' . $fotoTitle . '">' . $fotoTitle . '</button>';
-                }
-                return 'Tidak ada foto';
-            })
-            ->addColumn('level', function ($karyawan) {
-                return $karyawan->posisi ? $karyawan->posisi->level : 'Tidak ada posisi';
-            })
-            ->addColumn('workplace', function ($karyawan) {
-                return $karyawan->departemen ? $karyawan->departemen->workplace : 'Tidak ada departemen';
-            })
-            ->addColumn('created_at', function ($gambar) {
-                return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
-            })
-            ->addColumn('updated_at', function ($gambar) {
-                return $gambar->gambarKaryawan ? $gambar->gambarKaryawan->updated_at->format('Y-m-d H:i:s') : 'Belum Ada Foto'; // Format tanggal  
-            })
-            ->addColumn('action', function ($karyawan) {
-                $editButton = '<button class="btn btn-primary mt-1 mr-1 btn-sm edit" data-id="' . $karyawan->id . '">Edit</button>';
-                $deleteButton = '<button class="btn btn-danger mt-1 btn-sm delete" data-id="' . $karyawan->id . '">Delete</button>';
-
-                if ($karyawan->gambarKaryawan && $karyawan->gambarKaryawan->foto) {
-                    return $editButton . $deleteButton;
-                } else {
-                    $takePictureButton = '<button class="btn btn-success mt-1 btn-sm foto" data-id="' . $karyawan->id . '">Take Picture</button>';
-                    return $editButton . $deleteButton . $takePictureButton;
-                }
-            })
-            ->rawColumns(['foto', 'action'])
-            ->make(true); // Menggunakan DataTables
     }
 
     public function show($id)
@@ -166,34 +128,34 @@ class KaryawanBaruController extends Controller
         }
     }
 
-    public function getPhotoList()
-    {
+    // public function getPhotoList()
+    // {
 
-        $karyawans = GambarKaryawan::with('karyawan')->select('gambar_karyawan.*'); // Ambil semua data pengguna
-        return datatables()->of($karyawans) // Menggunakan DataTables
-            ->addColumn('karyawan_id', function ($gambar) {
-                return $gambar->karyawan ? $gambar->karyawan->nama : 'Tidak Diketahui'; // Menampilkan nama karyawan  
-            })
-            ->addColumn('karyawan_position', function ($gambar) {
-                return $gambar->karyawan ? $gambar->karyawan->level : 'Tidak Diketahui'; // Menampilkan nama karyawan  
-            })
-            ->addColumn('karyawan_departemen', function ($gambar) {
-                return $gambar->karyawan ? $gambar->karyawan->departemen : 'Tidak Diketahui'; // Menampilkan nama karyawan  
-            })
-            ->addColumn('created_at', function ($gambar) {
-                return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
-            })
-            ->addColumn('updated_at', function ($gambar) {
-                return $gambar->updated_at->format('Y-m-d H:i:s'); // Format tanggal  
-            })
-            ->addColumn('action', function ($karyawans) {
-                return '<button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
-                        <button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Take Picture</button>
-                        <button class="btn btn-danger btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
-            })
-            ->rawColumns(['action'])
-            ->make(true); // Menggunakan DataTables
-    }
+    //     $karyawans = GambarKaryawan::with('karyawan')->select('gambar_karyawan.*'); // Ambil semua data pengguna
+    //     return datatables()->of($karyawans) // Menggunakan DataTables
+    //         ->addColumn('karyawan_id', function ($gambar) {
+    //             return $gambar->karyawan ? $gambar->karyawan->nama : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+    //         })
+    //         ->addColumn('karyawan_position', function ($gambar) {
+    //             return $gambar->karyawan ? $gambar->karyawan->level : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+    //         })
+    //         ->addColumn('karyawan_departemen', function ($gambar) {
+    //             return $gambar->karyawan ? $gambar->karyawan->departemen : 'Tidak Diketahui'; // Menampilkan nama karyawan  
+    //         })
+    //         ->addColumn('created_at', function ($gambar) {
+    //             return $gambar->created_at->format('Y-m-d H:i:s'); // Format tanggal  
+    //         })
+    //         ->addColumn('updated_at', function ($gambar) {
+    //             return $gambar->updated_at->format('Y-m-d H:i:s'); // Format tanggal  
+    //         })
+    //         ->addColumn('action', function ($karyawans) {
+    //             return '<button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Edit</button>
+    //                     <button class="btn btn-primary btn-sm edit" data-id="' . $karyawans->id . '">Take Picture</button>
+    //                     <button class="btn btn-danger btn-sm delete" data-id="' . $karyawans->id . '">Delete</button>';
+    //         })
+    //         ->rawColumns(['action'])
+    //         ->make(true); // Menggunakan DataTables
+    // }
 
     public function storeFoto(Request $request, $karyawanId)
     {
@@ -428,5 +390,31 @@ class KaryawanBaruController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Employee not found.'], 404);
+    }
+
+    public function import_excel(Request $request)
+    {
+        // validasi
+        $this->validate($request, [
+            'file' => 'required|mimes:csv,xls,xlsx'
+        ]);
+
+        // menangkap file excel
+        $file = $request->file('file');
+
+        // membuat nama file unik
+        $nama_file = rand() . $file->getClientOriginalName();
+
+        // upload ke folder file_siswa di dalam folder public
+        $file->move('storage', $nama_file);
+
+        // import data
+        Excel::import(new CandidateImport, public_path('/storage/' . $nama_file));
+
+        // notifikasi dengan session
+        Session::flash('toast_success', 'Data Siswa Berhasil Diimport!');
+
+        // alihkan halaman kembali
+        return redirect('/candidate');
     }
 }

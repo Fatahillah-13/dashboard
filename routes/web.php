@@ -89,3 +89,5 @@ Route::get('/karyawan/filter', [KaryawanBaruController::class, 'datefilter'])->n
 
 Route::post('/karyawan/changenik', [KaryawanBaruController::class, 'updatenik'])->name('karyawan.changenik');
 Route::get('/getkaryawan/{id}', [KaryawanBaruController::class, 'getKaryawan'])->name('karyawan.getkaryawan');
+Route::post('/candidate/import_excel', [KaryawanBaruController::class, 'import_excel']);
+

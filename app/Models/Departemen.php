@@ -10,7 +10,7 @@ class Departemen extends Model
     use HasFactory;
 
     protected $table = 'departemen';
-    protected $fillable = ['workplace'];
+    protected $fillable = ['job_department'];
 
     public function karyawans()
     {

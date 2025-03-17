@@ -8,6 +8,13 @@
 
 {{-- Content body: main page content --}}
 @section('content_body')
+    {{-- notifikasi sukses --}}
+    @if ($sukses = Session::get('sukses'))
+        <div class="alert alert-success alert-block">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>{{ $sukses }}</strong>
+        </div>
+    @endif
     <div class="row">
         {{-- Form Tambah Pegawai --}}
         <div class="col-6">
@@ -139,7 +146,10 @@
                                         class="select-department form-control nama_edit2" onchange="GetDataKaryawan();"
                                         required>
                                         @php
-                                            $karyawans_belum = App\Models\KaryawanBaru::whereIn('status', [1, 2])->get();
+                                            $karyawans_belum = App\Models\KaryawanBaru::whereIn('status', [
+                                                1,
+                                                2,
+                                            ])->get();
                                         @endphp
                                         @foreach ($karyawans_belum as $karyawan)
                                             <option value="{{ $karyawan->id }}">Nama : {{ $karyawan->nama }} | Tempat Lahir
@@ -277,7 +287,8 @@
 
                 <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" id="searchInput" class="form-control float-right" placeholder="Search">
+                        <input type="text" name="table_search" id="searchInput" class="form-control float-right"
+                            placeholder="Search">
 
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-default">
@@ -373,7 +384,7 @@
     <div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <form method="post" action="/siswa/import_excel" enctype="multipart/form-data">
+            <form method="post" action="/candidate/import_excel" enctype="multipart/form-data">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
@@ -385,6 +396,9 @@
                         <label>Pilih file excel</label>
                         <div class="form-group">
                             <input type="file" name="file" required="required">
+                        </div>
+                        <div class="form-group">
+                            <a href="{{ asset('assets/template_import_candidate.xlsx') }}">Template Import Excel</a>
                         </div>
 
                     </div>
