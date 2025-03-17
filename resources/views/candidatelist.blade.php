@@ -448,6 +448,21 @@
     <script>
         data_uri = "";
         // Configure the webcam
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+
+            Webcam.set({
+                width: 250,
+                height: 200,
+                image_format: 'jpeg',
+                jpeg_quality: 90,
+                dest_width: 150,
+                dest_height: 150,
+                constraints: {
+                    facingMode: 'environment'
+                }
+            });
+        }
         Webcam.set({
             width: 320,
             height: 240,

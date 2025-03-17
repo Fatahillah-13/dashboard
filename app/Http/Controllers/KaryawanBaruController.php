@@ -298,7 +298,11 @@ class KaryawanBaruController extends Controller
     public function datefilter(Request $request)
     {
         $date = $request->input('date');
-        $karyawans = KaryawanBaru::with(['gambarkaryawan', 'posisi', 'departemen'])->whereDate('tgl_masuk', $date)->whereHas('gambarKaryawan')->get();
+        $karyawans = KaryawanBaru::with(['gambarkaryawan', 'posisi', 'departemen'])
+            ->whereDate('tgl_masuk', $date)
+            ->whereHas('gambarKaryawan')
+            ->where('status', 1)
+            ->get();
 
         return response()->json(['data' => $karyawans]);
     }
