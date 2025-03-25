@@ -315,13 +315,13 @@ return [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
-        [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
+        // [
+        //     'text' => 'pages',
+        //     'url' => 'admin/pages',
+        //     'icon' => 'far fa-fw fa-file',
+        //     'label' => 4,
+        //     'label_color' => 'success',
+        // ],
         ['header' => 'account_settings'],
         [
             'text' => 'Home',
@@ -329,9 +329,9 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
-            'text' => 'Data Sudah Foto',
-            'url' => '/',
-            'icon' => 'fas fa-fw fa-users',
+            'text' => 'Data Sudah Cetak',
+            'url' => '/list',
+            'icon' => 'fas fa-fw fa-table',
         ],
         [
             'text' => 'Cetak ID Card Baru',
@@ -407,7 +407,7 @@ return [
         ['header' => 'labels'],
         [
             'text' => 'Users',
-            'url' => '/',
+            'url' => '/accounts',
             'icon' => 'fas fa-fw fa-users',
         ],
     ],

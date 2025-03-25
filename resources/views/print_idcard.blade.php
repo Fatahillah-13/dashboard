@@ -37,6 +37,7 @@
                                         )
                                             ->whereHas('gambarKaryawan')
                                             ->whereNotNull('nik')
+                                            ->whereIn('status', [1])
                                             ->get();
                                     @endphp
                                     @foreach ($karyawans_belum as $karyawan)
@@ -351,8 +352,8 @@
                 data: {
                     employees: [{
                         nik: nik
-                            .value, // Assuming you want to update the status for this employee
-                        status: 3,// Add other fields if necessary
+                        .value, // Assuming you want to update the status for this employee
+                        // Add other fields if necessary
                     }]
                 },
                 success: function(response) {

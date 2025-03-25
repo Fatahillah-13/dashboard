@@ -346,8 +346,6 @@
                                 <td>{{ $karyawan->gambarKaryawan->created_at ?? 'Belum Foto' }}</td>
                                 <!-- Menampilkan tgl_foto jika ada -->
                                 <td>
-                                    <button class="btn btn-warning btn-sm edit"
-                                        data-id="{{ $karyawan->id }}">Edit</button>
                                     <button class="btn btn-danger btn-sm delete"
                                         data-id="{{ $karyawan->id }}">Delete</button>
                                 </td>

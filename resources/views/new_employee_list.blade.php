@@ -67,7 +67,7 @@
                                 <td>{{ $karyawan->nik ?? '-' }}</td>
                                 <td>{{ $karyawan->gambarKaryawan->no_foto ?? 'N/A' }}</td>
                                 <!-- Menampilkan no_foto jika ada -->
-                                <td>{{ $karyawan->nama }}</td>
+                                <td>{{ $karyawan->nama }} @if($karyawan->status == 2) (Tidak Lanjut) @endif</td>
                                 <td>{{ $karyawan->posisi->level ?? 'N/A' }}</td> <!-- Menampilkan nama level -->
                                 <td>{{ $karyawan->departemen->job_department ?? 'N/A' }}</td>
                                 <!-- Menampilkan nama departemen -->

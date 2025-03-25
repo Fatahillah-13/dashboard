@@ -25,6 +25,11 @@ Route::get('/admin/profile', function () {
     return view('profile');
 });
 
+// Route to profile page
+Route::get('/accounts', function () {
+    return view('accountList');
+});
+
 // Route to list calon karyawan page
 // Route::get('/list-new-member', function () {
 //     return view('list_new_member');
@@ -44,22 +49,22 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // })->name('karyawan-baru.create');
 
 // Route to list photo page
-Route::get('/photo', function () {
-    return view('list_photo');
+Route::get('/list', function () {
+    return view('list');
 });
 
 // Route to list ambil foto page
 Route::get('/candidate', function () {
     return view('candidatelist');
-});
+})->middleware('auth');
 
 Route::get('/new-employee', function () {
     return view('new_employee_list');
-});
+})->middleware('auth');
 
 Route::get('/print', function () {
     return view('print_idcard');
-});
+})->middleware('auth');
 
 Route::get('/printexample', function () {
     return view('print_frame');
@@ -91,3 +96,4 @@ Route::post('/karyawan/changenik', [KaryawanBaruController::class, 'updatenik'])
 Route::get('/getkaryawan/{id}', [KaryawanBaruController::class, 'getKaryawan'])->name('karyawan.getkaryawan');
 Route::post('/candidate/import_excel', [KaryawanBaruController::class, 'import_excel']);
 
+Route::post('/deleteUserSelected', [AuthController::class, 'deleteUserSelected'])->name('deleteuser.selected');

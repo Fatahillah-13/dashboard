@@ -362,16 +362,16 @@ class KaryawanBaruController extends Controller
         // Validate the incoming request
         $request->validate([
             'employees' => 'required|array',
-            'employees.*.nik' => 'required|string',
-            'employees.*.status' => 'required|integer', // Ensure status is an integer
+            'employees.*.nik' => 'required|string', // Assuming 'nik' is a string
+            // Add other validation rules as necessary
         ]);
 
         // Loop through each employee and update their status
         foreach ($request->employees as $employeeData) {
             $employee = KaryawanBaru::where('nik', $employeeData['nik'])->first();
             if ($employee) {
-                // Update the employee's status
-                $employee->status = $employeeData['status']; // Use the status from the request
+                // Update the employee's status or any other fields as necessary
+                $employee->status = 3; // Change this to the actual status you want to set
                 $employee->save();
             }
         }
