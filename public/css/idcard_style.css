@@ -51,8 +51,8 @@
     font-weight: 400;
 }
 .fullname-parent {
-    /* padding-top: 16px; */
-    width: 380px;
+    padding-top: 70px;
+    width: 360px;
     align-self: stretch;
     display: flex;
     flex-direction: column;
@@ -62,11 +62,11 @@
 }
 .photo-parent {
     position: absolute;
-    top: 212px;
+    top: 190px;
     bottom: 24px;
-    left: calc(50% - 195px);
-    width: 380px;
-    height: 480px;
+    left: calc(50% - 180px);
+    width: 360px;
+    height: 420px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -100,6 +100,10 @@
 }
 .preview {
     width: 100%;
-    height: 100%;
+    height: 420px;
     object-fit: cover;
+    -webkit-transform: rotate(90deg);
+    -webkit-transform-origin: 50% 50%;
+    transform: rotate(90deg);
+    transform-origin: 50% 50%;
 }

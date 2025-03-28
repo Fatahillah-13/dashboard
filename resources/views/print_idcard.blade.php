@@ -47,6 +47,14 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                {{-- <style>
+                                    #preview_edit {
+                                        -webkit-transform: rotate(90deg);
+                                        -webkit-transform-origin: 50% 50%;
+                                        transform: rotate(90deg);
+                                        transform-origin: 50% 50%;
+                                    }
+                                </style> --}}
                                 <script>
                                     function GetDataKaryawan() {
                                         var id = document.getElementById('nama_edit2').value;
@@ -65,13 +73,13 @@
                                                 $('#no_foto_show').val(data[1].no_foto).trigger('change');
                                                 if (data[1].foto) {
                                                     $('#preview').html(
-                                                        '<img src="{{ asset('storage/') }}' +
+                                                        '<img id="preview_edit" src="{{ asset('storage/') }}' +
                                                         '/' + data[1].foto +
-                                                        '" alt="Foto" width="360" height="420">'
+                                                        '" alt="Foto" width="420" height="360">'
                                                     );
                                                 } else {
                                                     $('#preview').html(
-                                                        '<img src="{{ asset('assets/img/pict_template.jpg') }}" alt="picture" width="150" height="150">'
+                                                        '<img src="{{ asset('assets/img/pict_template.jpg') }}" alt="picture" width="50" height="50">'
                                                     );
                                                 }
                                                 $('#nikid').text(data[0].nik); // Fill the department div
@@ -231,7 +239,8 @@
                         console.log(department);
 
                         if (ctpat.checked) {
-                            $('.fullname-parent').css('padding-top', '24px');
+                            $('.fullname-parent').css('padding-top', '60px');
+                            $('.photo-parent').css('padding-top', '40px');
                         }
 
                         if (ctpat.checked && department === 'HRD') {
@@ -345,14 +354,14 @@
                 pdf.save(`${name.value}_${nik.value}.pdf`);
             });
 
-            // Update the status in database
+            Update the status in database
             $.ajax({
                 url: '/karyawan/updatestatus', // Update with your endpoint
                 method: 'POST',
                 data: {
                     employees: [{
                         nik: nik
-                        .value, // Assuming you want to update the status for this employee
+                            .value, // Assuming you want to update the status for this employee
                         // Add other fields if necessary
                     }]
                 },

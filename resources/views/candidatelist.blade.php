@@ -254,14 +254,28 @@
                                     <input type="number" class="form-control" id="no_foto_edit" name="no_foto_edit">
                                 </div>
                             </div>
+                            <style>
+                                #my_camera_edit {
+                                    -webkit-transform: rotate(90deg);
+                                    -webkit-transform-origin: 50% 50%;
+                                    transform: rotate(90deg);
+                                    transform-origin: 50% 50%;
+                                }
+                                #preview_edit {
+                                    -webkit-transform: rotate(90deg);
+                                    -webkit-transform-origin: 50% 50%;
+                                    transform: rotate(90deg);
+                                    transform-origin: 50% 50%;
+                                }
+                            </style>
                             <div class="col-12 mx-3" id="myDiv_edit" style="padding: 16px 0px; justify-items: center">
                                 <div id="my_camera_edit" class="hidden" style="margin-bottom: 16px">
                                     <img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture"
-                                        style="width: 150px" height="150px">
+                                        style="width: 150px" height="250px">
                                 </div>
                                 <div id="preview_edit" class="">
-                                    <img src="{{ asset('assets/img/picture_icon.png') }}" alt="picture"
-                                        style="width: 150px" height="150px">
+                                    <img id="preview_edit_img" src="{{ asset('assets/img/picture_icon.png') }}" alt="picture"
+                                        style="width: 150px" height="250px">
                                 </div>
                                 <input type="hidden" id="imagePath_edit" name="imagePath_edit" value="">
                             </div>
@@ -283,7 +297,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Tabel Daftar Kandidat</h3>
+                <h3 class="card-title">Tabel Daftar Kandidat Belum Foto</h3>
 
                 <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 150px;">
@@ -304,47 +318,35 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>NIK</th>
                             <th>No. Foto</th>
                             <th>Nama</th>
                             <th>Level</th>
                             <th>Departemen</th>
-                            <th>Foto</th>
                             <th>Tgl. Daftar</th>
                             <th>Tgl. Lahir</th>
                             <th>Tgl. Masuk</th>
-                            <th>Tgl. Foto</th>
+
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $karyawans = App\Models\KaryawanBaru::whereDoesntHave('gambarKaryawan')->get();
+                        $karyawans = App\Models\KaryawanBaru::whereDoesntHave('gambarKaryawan')
+                            ->whereIn('status', [1])
+                            ->get();
                         ?>
                         @foreach ($karyawans as $index => $karyawan)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $karyawan->nik }}</td>
                                 <td>{{ $karyawan->gambarKaryawan->no_foto ?? 'N/A' }}</td>
                                 <!-- Menampilkan no_foto jika ada -->
                                 <td>{{ $karyawan->nama }}</td>
                                 <td>{{ $karyawan->posisi->level ?? 'N/A' }}</td> <!-- Menampilkan nama level -->
                                 <td>{{ $karyawan->departemen->job_department ?? 'N/A' }}</td>
                                 <!-- Menampilkan nama departemen -->
-                                <td>
-                                    @if ($karyawan->gambarKaryawan && $karyawan->gambarKaryawan->foto)
-                                        <!-- Cek apakah gambarKaryawan ada dan path-nya ada -->
-                                        <img src="{{ asset('storage/' . $karyawan->gambarKaryawan->foto) }}"
-                                            alt="Foto" width="100">
-                                    @else
-                                        Belum foto
-                                    @endif
-                                </td>
-                                <td>{{ $karyawan->created_at }}</td>
+                                <td>{{ $karyawan->created_at->format('Y-m-d') }}</td>
                                 <td>{{ $karyawan->tgl_lahir }}</td>
                                 <td>{{ $karyawan->tgl_masuk }}</td>
-                                <td>{{ $karyawan->gambarKaryawan->created_at ?? 'Belum Foto' }}</td>
-                                <!-- Menampilkan tgl_foto jika ada -->
                                 <td>
                                     <button class="btn btn-danger btn-sm delete"
                                         data-id="{{ $karyawan->id }}">Delete</button>
@@ -462,8 +464,8 @@
             });
         }
         Webcam.set({
-            width: 320,
-            height: 240,
+            width: 240,
+            height: 320,
             image_format: 'jpeg',
             jpeg_quality: 90
         });
@@ -632,8 +634,8 @@
         data_uri_update = "";
         // Configure the webcam
         Webcam.set({
-            width: 320,
-            height: 240,
+            width: 430,
+            height: 440,
             image_format: 'jpeg',
             jpeg_quality: 90
         });

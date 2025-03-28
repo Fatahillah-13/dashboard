@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\KaryawanBaruController;
@@ -97,3 +98,4 @@ Route::get('/getkaryawan/{id}', [KaryawanBaruController::class, 'getKaryawan'])-
 Route::post('/candidate/import_excel', [KaryawanBaruController::class, 'import_excel']);
 
 Route::post('/deleteUserSelected', [AuthController::class, 'deleteUserSelected'])->name('deleteuser.selected');
+Route::post('/account/store', [RegisterController::class, 'create'])->name('account.create');

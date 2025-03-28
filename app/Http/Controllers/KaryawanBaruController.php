@@ -314,23 +314,21 @@ class KaryawanBaruController extends Controller
         $newnik = $request->input('newnik');
 
         $karyawans = KaryawanBaru::where('tgl_masuk', $tglmasuk)->get();
+        // Check if the new NIK already exists
+        $existingKaryawan = KaryawanBaru::where('nik', $prefix . $newnik)->first();
 
         foreach ($karyawans as $karyawan) {
             // Check if the candidate has withdrawn (status = 2)
             if ($karyawan->status == 2) {
                 return response()->json(['message' => 'Kandidat ' . $karyawan->nama . ' mengundurkan diri.'], 400);
-            }
-
-            // Check if the new NIK already exists
-            $existingKaryawan = KaryawanBaru::where('nik', $prefix . $newnik)->first();
-            if ($existingKaryawan) {
+            } else if ($existingKaryawan) {
                 return response()->json(['message' => 'NIK already exists for another employee.'], 400);
+            } else {
+                // Update the NIK for the current employee
+                $karyawan->nik = $prefix . $newnik;
+                $karyawan->save();
+                $newnik++; // Increment the NIK number for the next employee
             }
-
-            // Update the NIK for the current employee
-            $karyawan->nik = $prefix . $newnik;
-            $karyawan->save();
-            $newnik++; // Increment the NIK number for the next employee
         }
 
         return response()->json(['message' => 'NIKs updated successfully.']);

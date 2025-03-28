@@ -39,6 +39,14 @@
             <!-- /.card-header -->
             <div class="card-body table-responsive p-0" style="height: 800px;">
                 <table class="table table-bordered table-striped table-head-fixed text-nowrap" id="employeetable">
+                    <style>
+                        #preview_edit {
+                            -webkit-transform: rotate(90deg);
+                            -webkit-transform-origin: 50% 50%;
+                            transform: rotate(90deg);
+                            transform-origin: 50% 50%;
+                        }
+                    </style>
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="selectAll"></th>
@@ -58,7 +66,9 @@
                     </thead>
                     <tbody>
                         <?php
-                        $karyawans = App\Models\KaryawanBaru::whereIn('status', [1, 2])->whereHas('gambarKaryawan')->get();
+                        $karyawans = App\Models\KaryawanBaru::whereIn('status', [1, 2])
+                            ->whereHas('gambarKaryawan')
+                            ->get();
                         ?>
                         @foreach ($karyawans as $index => $karyawan)
                             <tr>
@@ -67,14 +77,17 @@
                                 <td>{{ $karyawan->nik ?? '-' }}</td>
                                 <td>{{ $karyawan->gambarKaryawan->no_foto ?? 'N/A' }}</td>
                                 <!-- Menampilkan no_foto jika ada -->
-                                <td>{{ $karyawan->nama }} @if($karyawan->status == 2) (Tidak Lanjut) @endif</td>
+                                <td>{{ $karyawan->nama }} @if ($karyawan->status == 2)
+                                        (Tidak Lanjut)
+                                    @endif
+                                </td>
                                 <td>{{ $karyawan->posisi->level ?? 'N/A' }}</td> <!-- Menampilkan nama level -->
                                 <td>{{ $karyawan->departemen->job_department ?? 'N/A' }}</td>
                                 <!-- Menampilkan nama departemen -->
                                 <td>
                                     @if ($karyawan->gambarKaryawan && $karyawan->gambarKaryawan->foto)
                                         <!-- Cek apakah gambarKaryawan ada dan path-nya ada -->
-                                        <img src="{{ asset('storage/' . $karyawan->gambarKaryawan->foto) }}" alt="Foto"
+                                        <img id="preview_edit" src="{{ asset('storage/' . $karyawan->gambarKaryawan->foto) }}" alt="Foto"
                                             width="100">
                                     @else
                                         Belum foto
@@ -382,7 +395,7 @@
 
             $('#employeetable').on('click', '.statusbtn', function() {
                 var nik = $(this).data('id')
-            .toString(); // Get the NIK from the button's data attribute and convert to string
+                    .toString(); // Get the NIK from the button's data attribute and convert to string
 
                 $.ajax({
                     url: '/karyawan/updatestatus', // Update with your endpoint
@@ -535,7 +548,7 @@
                                     <td>${karyawan.gambarkaryawan.no_foto || 'N/A'}</td>
                                     <td>
                                         ${karyawan.gambarkaryawan && karyawan.gambarkaryawan.foto ? 
-                                            `<img src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
+                                            `<img id="preview_edit" src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
                                             'Belum foto'}
                                     </td>
                                     <td>${karyawan.gambarkaryawan ? formatDate(karyawan.gambarkaryawan.created_at) : 'Belum Foto'}</td>
@@ -640,7 +653,7 @@
                                     <td>${karyawan.gambarkaryawan.no_foto || 'N/A'}</td>
                                     <td>
                                         ${karyawan.gambarkaryawan && karyawan.gambarkaryawan.foto ? 
-                                            `<img src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
+                                            `<img id="preview_edit" src="/storage/${karyawan.gambarkaryawan.foto}" alt="Foto" width="100">` : 
                                             'Belum foto'}
                                     </td>
                                     <td><input type="checkbox" class="rowCtpatCheckbox" name="checkbox" id="rowCtpatCheckbox${index}"></td>

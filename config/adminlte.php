@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Hwaseung</b>Jepara',
+    'logo' => '<b>PICS</b> HWI',
     'logo_img' => 'assets/LOGO HWI BARU WEB.png',
     'logo_img_class' => 'brand-image-xs',
     'logo_img_xl' => null,

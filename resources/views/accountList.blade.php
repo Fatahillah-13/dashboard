@@ -76,7 +76,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="/register" method="POST">
+                    <form id="accountForm" action="/account/store" method="Post">
                         <div class="form-group">
                             <label for="email">Email address</label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror"
@@ -192,5 +192,45 @@
                 }
             });
         });
+    </script>
+    <script>
+        // $(document).ready(function() {
+        //     // Create form submit
+        //     $('#accountForm').on('submit', function(event) {
+        //         event.preventDefault(); // Mencegah form dari submit biasa  
+
+        //         // Buat payload JSON
+        //         var payload = {
+        //             name: $('#name').val(),
+        //             email: $('#email').val(),
+        //             password: $('#password').val(),
+                    
+        //         };
+
+        //         $.ajax({
+        //             url: '{{ route('account.create') }}',
+        //             type: 'POST',
+        //             data: payload,
+        //             success: function(response) {
+        //                 // Handle success
+        //                 toastr.success('Data User telah disimpan');
+        //                 // Anda bisa mereset form atau melakukan redirect  
+        //                 $('#accountForm')[0].reset();
+        //                 table.ajax.reload()
+        //             },
+        //             error: function(xhr, status, error) {
+        //                 // Handle error  
+        //                 var errors = xhr.responseJSON.errors;
+        //                 if (errors) {
+        //                     $.each(errors, function(key, value) {
+        //                         alert(value[0]);
+        //                     });
+        //                 } else {
+        //                     toastr.error('An error occurred. Please try again.');
+        //                 }
+        //             }
+        //         });
+        //     });
+        // });
     </script>
 @endpush
